@@ -4,6 +4,8 @@ project(plazza VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_CLANG_TIDY "clang-tidy")
 
+set (CXXFLAGS "-pthread")
+
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR})
 
 set(HEADER_FILES ${PROJECT_SOURCE_DIR}/)
@@ -15,11 +17,14 @@ add_executable(${PROJECT_NAME}
 )
 
 add_subdirectory(Error)
+add_subdirectory(Kitchen)
 
 target_link_libraries(${PROJECT_NAME} Error)
+target_link_libraries(${PROJECT_NAME} Kitchen)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
     "${CMAKE_SOURCE_DIR}/Error"
+    "${CMAKE_SOURCE_DIR}/Kitchen"
 )
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
