@@ -7,8 +7,6 @@
 
 #include "Threads.hpp"
 
-#include <iostream>
-
 namespace threads
 {
 
@@ -51,11 +49,12 @@ void ThreadPool::workerThread() noexcept
 void ThreadPool::executeTask() noexcept
 {
     std::unique_lock<std::mutex> lock(*mutex_);
-    if (!queue_.empty()) {
-        Task task = queue_.front();
-        task.f();
-        queue_.pop();
-    }
+    condition_->wait(lock, [this] { return (finished_ || !queue_.empty()); });
+    if (finished_ && queue_.empty())
+        return;
+    Task task = queue_.front();
+    task.f();
+    queue_.pop();
 }
 
 void ThreadPool::addTask(const Task& task) noexcept
