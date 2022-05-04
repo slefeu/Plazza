@@ -16,22 +16,9 @@
 namespace threads
 {
 
-class Task
-{
-  public:
+struct Task {
     using Function = void (*)();
-    Task() noexcept = default;
-    Task(const Task& other) noexcept = default;
-    Task(Task&& other) noexcept = default;
-    ~Task() noexcept = default;
-
-    Task& operator=(const Task& rhs) noexcept = default;
-    Task& operator=(Task&& rhs) noexcept = default;
-
     Function f;
-
-  protected:
-  private:
 };
 
 class ThreadPool
@@ -45,6 +32,8 @@ class ThreadPool
     ThreadPool& operator=(const ThreadPool& rhs) noexcept = delete;
     ThreadPool& operator=(ThreadPool&& rhs) noexcept = default;
 
+    void addTask(const Task& task) noexcept;
+
   protected:
   private:
     // attributes
@@ -57,7 +46,6 @@ class ThreadPool
     // methods
     std::size_t getPoolSize() const noexcept;
     void workerThread() noexcept;
-    void addTask(Task) noexcept;
     void executeTask() noexcept;
 };
 }

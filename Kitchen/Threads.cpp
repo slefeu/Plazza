@@ -11,6 +11,7 @@
 
 namespace threads
 {
+
 ThreadPool::ThreadPool(unsigned int nbThreads) noexcept
     : mutex_(std::make_unique<std::mutex>())
     , condition_(std::make_unique<std::condition_variable>())
@@ -49,15 +50,15 @@ void ThreadPool::workerThread() noexcept
 
 void ThreadPool::executeTask() noexcept
 {
-    {
-        std::unique_lock<std::mutex> lock(*mutex_);
+    std::unique_lock<std::mutex> lock(*mutex_);
+    if (!queue_.empty()) {
         Task task = queue_.front();
         task.f();
         queue_.pop();
     }
 }
 
-void ThreadPool::addTask(Task task) noexcept
+void ThreadPool::addTask(const Task& task) noexcept
 {
     {
         std::unique_lock<std::mutex> lock(*mutex_);

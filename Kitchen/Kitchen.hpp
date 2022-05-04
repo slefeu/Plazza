@@ -10,7 +10,7 @@
 class Kitchen
 {
 public:
-    Kitchen(unsigned int cooks) noexcept;
+    explicit Kitchen(unsigned int cooks) noexcept;
     Kitchen(const Kitchen &other) noexcept = default;
     Kitchen(Kitchen &&other) noexcept = default;
     ~Kitchen() noexcept = default;
