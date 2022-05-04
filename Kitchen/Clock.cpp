@@ -7,12 +7,13 @@
 
 #include "Clock.hpp"
 
-void Clock::setPauseStart() noexcept
+void Clock::setIdle() noexcept
 {
+    idle_ = true;
     start_ = std::chrono::high_resolution_clock::now();
 }
 
-bool Clock::checkElapsedTime() noexcept
+bool Clock::checkElapsedTime() const noexcept
 {
     auto end = std::chrono::system_clock::now();
 
