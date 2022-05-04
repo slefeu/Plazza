@@ -37,7 +37,7 @@ class ThreadPool
   protected:
   private:
     // attributes
-    bool finished_ = false;
+    bool finished_{false};
     std::queue<Task> queue_;
     std::vector<std::thread> workers_;
     std::unique_ptr<std::mutex> mutex_;
