@@ -10,7 +10,7 @@
 namespace pizza
 {
 
-Regina::Regina(pizza::PizzaSize size, int modifier) noexcept
+PizzaRegina::PizzaRegina(pizza::PizzaSize size, int modifier) noexcept
     : APizza(pizza::Regina, size, (2 * modifier))
 {
     ingredients_.emplace_back(Ingredients::Doe);
@@ -20,7 +20,7 @@ Regina::Regina(pizza::PizzaSize size, int modifier) noexcept
     ingredients_.emplace_back(Ingredients::Mushrooms);
 }
 
-Margarita::Margarita(pizza::PizzaSize size, int modifier) noexcept
+PizzaMargarita::PizzaMargarita(pizza::PizzaSize size, int modifier) noexcept
     : APizza(pizza::Margarita, size, (1 * modifier))
 {
     ingredients_.emplace_back(Ingredients::Doe);
@@ -28,7 +28,7 @@ Margarita::Margarita(pizza::PizzaSize size, int modifier) noexcept
     ingredients_.emplace_back(Ingredients::Gruyere);
 }
 
-Americana::Americana(pizza::PizzaSize size, int modifier) noexcept
+PizzaAmericana::PizzaAmericana(pizza::PizzaSize size, int modifier) noexcept
     : APizza(pizza::Americana, size, (2 * modifier))
 {
     ingredients_.emplace_back(Ingredients::Doe);
@@ -37,7 +37,7 @@ Americana::Americana(pizza::PizzaSize size, int modifier) noexcept
     ingredients_.emplace_back(Ingredients::Steak);
 }
 
-Fantasia::Fantasia(pizza::PizzaSize size, int modifier) noexcept
+PizzaFantasia::PizzaFantasia(pizza::PizzaSize size, int modifier) noexcept
     : APizza(pizza::Fantasia, size, (4 * modifier))
 {
     ingredients_.emplace_back(Ingredients::Doe);
