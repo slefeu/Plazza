@@ -29,19 +29,15 @@ ThreadPool::~ThreadPool() noexcept
         std::unique_lock<std::mutex> lock(*mutex_);
         finished_ = true;
     }
-    for (auto& worker : workers_)
-        worker.join();
     condition_->notify_all();
-}
-
-std::size_t ThreadPool::getPoolSize() const noexcept
-{
-    return (workers_.size());
+    for (auto& worker : workers_) {
+        worker.join();
+    }
 }
 
 void ThreadPool::workerThread() noexcept
 {
-    while (true) {
+    while (!finished_) {
         executeTask();
     }
 }
@@ -49,7 +45,8 @@ void ThreadPool::workerThread() noexcept
 void ThreadPool::executeTask() noexcept
 {
     std::unique_lock<std::mutex> lock(*mutex_);
-    condition_->wait(lock, [this] { return (finished_ || !queue_.empty()); });
+    condition_->wait(
+        lock, [this] { return (this->finished_ || !this->queue_.empty()); });
     if (finished_ && queue_.empty())
         return;
     Task task = queue_.front();

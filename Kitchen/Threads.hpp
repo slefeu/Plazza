@@ -42,9 +42,7 @@ class ThreadPool
     std::vector<std::thread> workers_;
     std::unique_ptr<std::mutex> mutex_;
     std::unique_ptr<std::condition_variable> condition_;
-
     // methods
-    std::size_t getPoolSize() const noexcept;
     void workerThread() noexcept;
     void executeTask() noexcept;
 };
