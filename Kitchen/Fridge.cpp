@@ -24,6 +24,11 @@ void Fridge::restock() noexcept
     }
 }
 
+unsigned int Fridge::getRestockTime() const noexcept
+{
+    return (restock_time_);
+}
+
 void Fridge::remove(const pizza::Ingredients ingredient) noexcept
 {
     stocks_[ingredient]--;
