@@ -4,7 +4,7 @@ project(plazza VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_CLANG_TIDY "clang-tidy")
 
-set (CXXFLAGS "-pthread")
+set(CXXFLAGS "-pthread")
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR})
 
