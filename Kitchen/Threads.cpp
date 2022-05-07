@@ -39,21 +39,32 @@ void ThreadPool::waitForExecution() noexcept
 void ThreadPool::workerThread() noexcept
 {
     while (!finished_) {
-        executeTask();
+        executeTask(getTask());
     }
 }
 
-void ThreadPool::executeTask() noexcept
+void ThreadPool::executeTask(const Task& task) noexcept
 {
+    task.f();
+    {
+        std::unique_lock<std::mutex> lock(mutex_);
+        wait_condition_.notify_one();
+    }
+}
+
+Task ThreadPool::getTask() noexcept
+{
+    Task task{};
+    task.f = [] { return; };
+
     std::unique_lock<std::mutex> lock(mutex_);
     condition_.wait(
         lock, [this] { return (this->finished_ || !this->queue_.empty()); });
     if (finished_ && queue_.empty())
-        return;
-    Task task = queue_.front();
+        return task;
+    task = queue_.front();
     queue_.pop();
-    task.f();
-    wait_condition_.notify_one();
+    return (task);
 }
 
 void ThreadPool::addTask(const Task& task) noexcept

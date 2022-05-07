@@ -48,6 +48,7 @@ class ThreadPool
 
     // methods
     void workerThread() noexcept;
-    void executeTask() noexcept;
+    void executeTask(const Task& task) noexcept;
+    Task getTask() noexcept;
 };
 }
