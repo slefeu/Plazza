@@ -33,7 +33,6 @@ class Reception
     void exit() noexcept;
     void log();
     void status();
-
     // attributes
     std::string command_;
     int cooks_ = 0;

@@ -7,18 +7,39 @@
 
 #include "Clock.hpp"
 
-void Clock::setIdle() noexcept
+void Clock::setIdle(bool value) noexcept
 {
-    idle_ = true;
+    idle_ = value;
     start_ = std::chrono::high_resolution_clock::now();
 }
 
-bool Clock::checkElapsedTime() const noexcept
+bool Clock::getIdle() const noexcept
+{
+    return (idle_);
+}
+
+bool Clock::isIdle() const noexcept
 {
     auto end = std::chrono::system_clock::now();
 
     if (std::chrono::duration_cast<std::chrono::seconds>(end - start_).count()
         >= MAX_TIME)
         return (true);
+    return (false);
+}
+
+void Clock::reset() noexcept
+{
+    start_ = std::chrono::high_resolution_clock::now();
+}
+
+bool Clock::isNSeconds(unsigned int seconds) noexcept
+{
+    auto end = std::chrono::high_resolution_clock::now();
+
+    if (std::chrono::duration_cast<std::chrono::seconds>(end - start_).count()
+        >= seconds) {
+        return (true);
+    }
     return (false);
 }

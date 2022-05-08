@@ -28,6 +28,7 @@ class Fridge
     bool contains(pizza::Ingredients ingredient) const noexcept;
     void remove(pizza::Ingredients ingredient) noexcept;
     unsigned int getRestockTime() const noexcept;
+
   protected:
   private:
     static constexpr unsigned int MAX_STOCK = 5;
