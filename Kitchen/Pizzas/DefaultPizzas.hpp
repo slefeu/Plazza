@@ -28,17 +28,17 @@ class PizzaRegina : public APizza
 
 class PizzaMargarita : public APizza
 {
-public:
-  PizzaMargarita(PizzaSize size, int modifier) noexcept;
-  PizzaMargarita(const PizzaMargarita &other) noexcept = default;
-  PizzaMargarita(PizzaMargarita &&other) noexcept = default;
-  ~PizzaMargarita() noexcept = default;
+  public:
+    PizzaMargarita(PizzaSize size, int modifier) noexcept;
+    PizzaMargarita(const PizzaMargarita& other) noexcept = default;
+    PizzaMargarita(PizzaMargarita&& other) noexcept = default;
+    ~PizzaMargarita() noexcept = default;
 
-  PizzaMargarita &operator=(const PizzaMargarita &rhs) noexcept = default;
-  PizzaMargarita &operator=(PizzaMargarita &&rhs) noexcept = default;
+    PizzaMargarita& operator=(const PizzaMargarita& rhs) noexcept = default;
+    PizzaMargarita& operator=(PizzaMargarita&& rhs) noexcept = default;
 
-protected:
-private:
+  protected:
+  private:
 };
 
 class PizzaAmericana : public APizza
@@ -58,16 +58,16 @@ class PizzaAmericana : public APizza
 
 class PizzaFantasia : public APizza
 {
-public:
-  PizzaFantasia(PizzaSize size, int modifier) noexcept;
-  PizzaFantasia(const PizzaFantasia &other) noexcept = default;
-  PizzaFantasia(PizzaFantasia &&other) noexcept = default;
-  ~PizzaFantasia() noexcept = default;
+  public:
+    PizzaFantasia(PizzaSize size, int modifier) noexcept;
+    PizzaFantasia(const PizzaFantasia& other) noexcept = default;
+    PizzaFantasia(PizzaFantasia&& other) noexcept = default;
+    ~PizzaFantasia() noexcept = default;
 
-  PizzaFantasia &operator=(const PizzaFantasia &rhs) noexcept = default;
-  PizzaFantasia &operator=(PizzaFantasia &&rhs) noexcept = default;
+    PizzaFantasia& operator=(const PizzaFantasia& rhs) noexcept = default;
+    PizzaFantasia& operator=(PizzaFantasia&& rhs) noexcept = default;
 
-protected:
-private:
+  protected:
+  private:
 };
 } // namespace pizza
