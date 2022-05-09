@@ -17,5 +17,20 @@ APizza::APizza(PizzaType type, PizzaSize size, int time) noexcept
 {
 }
 
+std::vector<Ingredients> APizza::getIngredients() const noexcept
+{
+    return (ingredients_);
+}
+
+CookingTime APizza::getCookingTime() const noexcept
+{
+    return (cooking_time_);
+}
+
+PizzaType APizza::getPizzaType() const noexcept
+{
+    return (type_);
+}
+
 // définir pack et unpack
 } // namespace pizza

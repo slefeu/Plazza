@@ -11,6 +11,9 @@
 
 namespace pizza
 {
+
+using CookingTime = unsigned int;
+static constexpr unsigned int TYPES = 4;
 enum PizzaType { Regina = 1, Margarita = 2, Americana = 4, Fantasia = 8 };
 enum PizzaSize { S = 1, M = 2, L = 4, XL = 8, XXL = 16 };
 enum Ingredients {
@@ -36,13 +39,15 @@ class APizza
     APizza& operator=(const APizza& rhs) noexcept = default;
     APizza& operator=(APizza&& rhs) noexcept = default;
 
-    void pack();   // à définir
-    void unpack(); //à définir
+    CookingTime getCookingTime() const noexcept;
+    PizzaType getPizzaType() const noexcept;
+    std::vector<Ingredients> getIngredients() const noexcept;
+
   protected:
     PizzaType type_;
     PizzaSize size_;
     std::vector<Ingredients> ingredients_;
-    int cooking_time_;
+    CookingTime cooking_time_;
 
   private:
 };
