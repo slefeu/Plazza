@@ -9,6 +9,7 @@
 #include <condition_variable>
 #include <functional>
 #include <mutex>
+#include <optional>
 #include <queue>
 #include <thread>
 #include <vector>
@@ -16,10 +17,7 @@
 namespace threads
 {
 
-struct Task {
-    using Function = void (*)();
-    Function f;
-};
+using Task = std::function<void(void)>;
 
 class ThreadPool
 {
@@ -49,6 +47,6 @@ class ThreadPool
     // methods
     void workerThread() noexcept;
     void executeTask(const Task& task) noexcept;
-    Task getTask() noexcept;
+    std::optional<Task> getTask() noexcept;
 };
 }

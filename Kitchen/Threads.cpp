@@ -7,7 +7,6 @@
 
 #include "Threads.hpp"
 
-#include <iostream>
 namespace threads
 {
 
@@ -39,30 +38,29 @@ void ThreadPool::waitForExecution() noexcept
 void ThreadPool::workerThread() noexcept
 {
     while (!finished_) {
-        executeTask(getTask());
+        auto task = getTask();
+        if (task.has_value())
+            executeTask(task.value());
     }
 }
 
 void ThreadPool::executeTask(const Task& task) noexcept
 {
-    task.f();
+    task();
     {
         std::unique_lock<std::mutex> lock(mutex_);
         wait_condition_.notify_one();
     }
 }
 
-Task ThreadPool::getTask() noexcept
+std::optional<Task> ThreadPool::getTask() noexcept
 {
-    Task task{};
-    task.f = [] { return; };
-
     std::unique_lock<std::mutex> lock(mutex_);
     condition_.wait(
         lock, [this] { return (this->finished_ || !this->queue_.empty()); });
     if (finished_ && queue_.empty())
-        return task;
-    task = queue_.front();
+        return (std::nullopt);
+    const Task& task = queue_.front();
     queue_.pop();
     return (task);
 }
