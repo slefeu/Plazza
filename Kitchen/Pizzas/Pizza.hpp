@@ -2,22 +2,23 @@
 ** EPITECH PROJECT, 2022
 ** Plazza
 ** File description:
-** APizza
+** Pizza
 */
 
 #pragma once
 
+#include <ostream>
 #include <vector>
 
 namespace pizza
 {
 
-using CookingTime = unsigned int;
+using CookingTime = double;
 static constexpr unsigned int TYPES = 4;
 enum PizzaType { Regina = 1, Margarita = 2, Americana = 4, Fantasia = 8 };
 enum PizzaSize { S = 1, M = 2, L = 4, XL = 8, XXL = 16 };
 enum Ingredients {
-    Doe,
+    Dough,
     Tomato,
     Gruyere,
     Ham,
@@ -28,16 +29,16 @@ enum Ingredients {
     ChiefLove
 };
 
-class APizza
+class Pizza
 {
   public:
-    APizza(PizzaType, PizzaSize, int) noexcept;
-    APizza(const APizza& other) noexcept = default;
-    APizza(APizza&& other) noexcept = default;
-    ~APizza() noexcept = default;
+    Pizza(PizzaType, PizzaSize, double) noexcept;
+    Pizza(const Pizza& other) noexcept = default;
+    Pizza(Pizza&& other) noexcept = default;
+    ~Pizza() noexcept = default;
 
-    APizza& operator=(const APizza& rhs) noexcept = default;
-    APizza& operator=(APizza&& rhs) noexcept = default;
+    Pizza& operator=(const Pizza& rhs) noexcept = default;
+    Pizza& operator=(Pizza&& rhs) noexcept = default;
 
     CookingTime getCookingTime() const noexcept;
     PizzaType getPizzaType() const noexcept;
@@ -51,4 +52,6 @@ class APizza
 
   private:
 };
+
+std::ostream& operator<<(std::ostream& output, Ingredients rhs) noexcept;
 } // namespace pizza
