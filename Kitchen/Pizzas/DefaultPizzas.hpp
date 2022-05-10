@@ -6,15 +6,15 @@
 */
 
 #pragma once
-#include "APizza.hpp"
+#include "Pizza.hpp"
 
 namespace pizza
 {
 
-class PizzaRegina : public APizza
+class PizzaRegina : public Pizza
 {
   public:
-    PizzaRegina(PizzaSize size, int modifier) noexcept;
+    PizzaRegina(PizzaSize size, double modifier) noexcept;
     PizzaRegina(const PizzaRegina& other) noexcept = default;
     PizzaRegina(PizzaRegina&& other) noexcept = default;
     ~PizzaRegina() noexcept = default;
@@ -26,10 +26,10 @@ class PizzaRegina : public APizza
   private:
 };
 
-class PizzaMargarita : public APizza
+class PizzaMargarita : public Pizza
 {
   public:
-    PizzaMargarita(PizzaSize size, int modifier) noexcept;
+    PizzaMargarita(PizzaSize size, double modifier) noexcept;
     PizzaMargarita(const PizzaMargarita& other) noexcept = default;
     PizzaMargarita(PizzaMargarita&& other) noexcept = default;
     ~PizzaMargarita() noexcept = default;
@@ -41,10 +41,10 @@ class PizzaMargarita : public APizza
   private:
 };
 
-class PizzaAmericana : public APizza
+class PizzaAmericana : public Pizza
 {
   public:
-    PizzaAmericana(PizzaSize size, int modifier) noexcept;
+    PizzaAmericana(PizzaSize size, double modifier) noexcept;
     PizzaAmericana(const PizzaAmericana& other) noexcept = default;
     PizzaAmericana(PizzaAmericana&& other) noexcept = default;
     ~PizzaAmericana() noexcept = default;
@@ -56,10 +56,10 @@ class PizzaAmericana : public APizza
   private:
 };
 
-class PizzaFantasia : public APizza
+class PizzaFantasia : public Pizza
 {
   public:
-    PizzaFantasia(PizzaSize size, int modifier) noexcept;
+    PizzaFantasia(PizzaSize size, double modifier) noexcept;
     PizzaFantasia(const PizzaFantasia& other) noexcept = default;
     PizzaFantasia(PizzaFantasia&& other) noexcept = default;
     ~PizzaFantasia() noexcept = default;
