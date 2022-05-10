@@ -7,6 +7,8 @@
 
 #include "Fridge.hpp"
 
+#include <iostream>
+
 namespace plazza
 {
 
@@ -24,6 +26,14 @@ void Fridge::restock() noexcept
     }
 }
 
+void Fridge::takeIngredients(
+    const std::vector<pizza::Ingredients>& list) noexcept
+{
+    for (auto it = std::begin(list); it != std::end(list); ++it) {
+        remove(*it);
+    }
+}
+
 unsigned int Fridge::getRestockTime() const noexcept
 {
     return (restock_time_);
@@ -37,6 +47,28 @@ void Fridge::remove(const pizza::Ingredients ingredient) noexcept
 bool Fridge::contains(const pizza::Ingredients ingredient) const noexcept
 {
     return (stocks_[ingredient] != 0);
+}
+
+void Fridge::display() const noexcept
+{
+    unsigned int index = 0;
+
+    std::cout << "\nKitchen stock:" << std::endl;
+    for (auto i : stocks_) {
+        std::cout << static_cast<pizza::Ingredients>(index) << ": "
+                  << std::to_string(i) << std::endl;
+        ++index;
+    }
+}
+
+bool Fridge::hasEnough(
+    const std::vector<pizza::Ingredients>& list) const noexcept
+{
+    for (auto i : list) {
+        if (!contains(i))
+            return (false);
+    }
+    return (true);
 }
 
 } // namespace plazza

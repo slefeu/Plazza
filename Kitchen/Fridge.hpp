@@ -9,7 +9,7 @@
 
 #include <array>
 
-#include "APizza.hpp"
+#include "Pizza.hpp"
 
 namespace plazza
 {
@@ -25,14 +25,19 @@ class Fridge
     Fridge& operator=(Fridge&& rhs) noexcept = default;
 
     void restock() noexcept;
-    bool contains(pizza::Ingredients ingredient) const noexcept;
-    void remove(pizza::Ingredients ingredient) noexcept;
     unsigned int getRestockTime() const noexcept;
+    bool hasEnough(const std::vector<pizza::Ingredients>& list) const noexcept;
+    void takeIngredients(const std::vector<pizza::Ingredients>& list) noexcept;
+    void display() const noexcept;
 
   protected:
   private:
     static constexpr unsigned int MAX_STOCK = 5;
     unsigned int restock_time_;
-    std::array<std::size_t, 10> stocks_{{5, 5, 5, 5, 5, 5, 5, 5, 5, 5}};
+    std::array<std::size_t, 9> stocks_{{5, 5, 5, 5, 5, 5, 5, 5, 5}};
+
+    // methods
+    bool contains(pizza::Ingredients ingredient) const noexcept;
+    void remove(pizza::Ingredients ingredient) noexcept;
 };
 }
