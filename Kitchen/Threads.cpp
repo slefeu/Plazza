@@ -60,7 +60,7 @@ std::optional<Task> ThreadPool::getTask() noexcept
         lock, [this] { return (this->finished_ || !this->queue_.empty()); });
     if (finished_ && queue_.empty())
         return (std::nullopt);
-    const Task& task = queue_.front();
+    Task task = queue_.front();
     queue_.pop();
     return (task);
 }
