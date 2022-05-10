@@ -53,6 +53,7 @@ Checks: '
   -cert-msc51-cpp,
   -fuchsia-statically-constructed-objects,
   -cppcoreguidelines-avoid-non-const-global-variables,
+  -performance-unnecessary-value-param,
 '
 CheckOptions:
   - key:             cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor
