@@ -15,9 +15,9 @@ namespace pizza
 
 using CookingTime = double;
 static constexpr unsigned int TYPES = 4;
-enum PizzaType { Regina = 1, Margarita = 2, Americana = 4, Fantasia = 8 };
-enum PizzaSize { S = 1, M = 2, L = 4, XL = 8, XXL = 16 };
-enum Ingredients {
+enum class PizzaType { Regina = 1, Margarita = 2, Americana = 4, Fantasia = 8 };
+enum class PizzaSize { S = 1, M = 2, L = 4, XL = 8, XXL = 16 };
+enum class Ingredients {
     Dough,
     Tomato,
     Gruyere,

@@ -41,12 +41,12 @@ unsigned int Fridge::getRestockTime() const noexcept
 
 void Fridge::remove(const pizza::Ingredients ingredient) noexcept
 {
-    stocks_[ingredient]--;
+    stocks_[static_cast<unsigned int>(ingredient)]--;
 }
 
 bool Fridge::contains(const pizza::Ingredients ingredient) const noexcept
 {
-    return (stocks_[ingredient] != 0);
+    return (stocks_[static_cast<unsigned int>(ingredient)] != 0);
 }
 
 void Fridge::display() const noexcept
