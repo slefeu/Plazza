@@ -19,8 +19,8 @@ namespace plazza
 class Kitchen
 {
   public:
-    explicit Kitchen(unsigned int nb_cooks,
-        int multiplier,
+    explicit Kitchen(double multiplier,
+        unsigned int nb_cooks,
         unsigned int restock_time) noexcept;
     Kitchen(const Kitchen& other) noexcept = delete;
     Kitchen(Kitchen&& other) noexcept = delete;
@@ -34,19 +34,20 @@ class Kitchen
   private:
     threads::ThreadPool cooks_;
     unsigned int max_pizza_;
-    int multiplier_;
+    double multiplier_;
     bool full_{false};
     bool running_{true};
     Clock clock_;
     Fridge fridge_;
     std::mutex mutex_;
-    std::queue<std::unique_ptr<pizza::APizza>> waiting_ = {};
-    std::queue<std::unique_ptr<pizza::APizza>> cooking_ = {};
-    std::queue<std::unique_ptr<pizza::APizza>> cooked_ = {};
+    std::queue<pizza::Pizza> waiting_ = {};
+    std::queue<pizza::Pizza> cooked_ = {};
 
-    // method
+    // methods
     void shutdown() noexcept;
-    void task(const pizza::APizza pizza) noexcept;
+    void task(pizza::Pizza pizza) noexcept;
     std::optional<threads::Task> createTask() noexcept;
+    void tryMakePizzas() noexcept;
+    void addWaitPizza(pizza::PizzaType, pizza::PizzaSize, double);
 };
 } // namespace plazza

@@ -10,17 +10,19 @@
 #include <iostream> //pour des prints de débug
 
 #include "DefaultPizzas.hpp"
-#include "Pizzas/APizza.hpp"
+#include "Errors.hpp"
+#include "Factory.hpp"
 
 namespace plazza
 {
 
-Kitchen::Kitchen(
-    unsigned int nb_cooks, int multiplier, unsigned int restock_time) noexcept
+Kitchen::Kitchen(double multiplier,
+    unsigned int nb_cooks,
+    unsigned int restock_time) noexcept
     : cooks_(nb_cooks)
     , max_pizza_(nb_cooks * 2)
     , multiplier_(multiplier)
-    , fridge_(Fridge(restock_time))
+    , fridge_(Fridge(restock_time / 1000))
 {
 }
 
@@ -29,56 +31,74 @@ void Kitchen::shutdown() noexcept
     running_ = false;
 }
 
-std::optionalthreads::Task Kitchen::createTask() noexcept
+void Kitchen::addWaitPizza(const pizza::PizzaType type,
+    const pizza::PizzaSize size,
+    const double multiplier)
 {
-    const std::unique_ptr<pizza::APizza>& pizza_ptr = waiting_.front();
-    const pizza::APizza pizza = *pizza_ptr;
+    waiting_.emplace(Factory::createPizza(type, size, multiplier));
+}
 
-    cooking_.emplace(std::make_unique<pizza::APizza>(pizza));
+std::optional<threads::Task> Kitchen::createTask() noexcept
+{
+    pizza::Pizza pizza = waiting_.front();
+    auto list = pizza.getIngredients();
+
+    if (!fridge_.hasEnough(list))
+        return (std::nullopt);
+    fridge_.takeIngredients(list);
     waiting_.pop();
-    return ([pizza, this] { return plazza::Kitchen::task(pizza); });
+    return ([this, pizza] { return plazza::Kitchen::task(pizza); });
+}
+
+void Kitchen::tryMakePizzas() noexcept
+{
+    while (!waiting_.empty()) {
+        auto task = createTask();
+        if (task.has_value())
+            cooks_.addTask(task.value());
+    }
+    cooks_.waitForExecution();
 }
 
 void Kitchen::run() noexcept
 {
-    waiting_.emplace(
-        std::make_unique<pizza::APizza>(pizza::Regina, pizza::PizzaSize::M, 1));
-    waiting_.emplace(
-        std::make_unique<pizza::APizza>(pizza::Regina, pizza::PizzaSize::M, 1));
-    waiting_.emplace(
-        std::make_unique<pizza::APizza>(pizza::Regina, pizza::PizzaSize::M, 1));
-
-    cooks_.addTask(createTask());
-    cooks_.addTask(createTask());
-    cooks_.addTask(createTask());
-    cooks_.waitForExecution();
-
-    // while (running_) {
-    //     if (!clock_.getIdle()) {
-    //         if (clock_.isNSeconds(fridge_.getRestockTime())) {
-    //             fridge_.restock();
-    //         }
-    //         // if (waiting_.empty() && cooked_.empty()) {
-    //         //     clock_.setIdle(true);
-    //         //     std::cout << "is idle\n";
-    //         // }
-    //     } else {
-    //         if (clock_.isIdle()) {
-    //             shutdown();
-    //         }
-    //     }
-    // }
+    // quand on va recevoir une pizza, voilà le format pour essayer de la mettre
+    // dans la waiting list
+    //  try {
+    //      addWaitPizza(pizza::Americana, pizza::PizzaSize::M, 1);
+    //  } catch (const ExecutionError& error) {
+    //      std ::cout << error.what() << std ::endl;
+    //  }
+    //  il va falloir checker la quantité de pizzas dans waiting + cooked pour
+    //  voir si ça dépasse pas max_pizza !!
+    //à faire soit dans addPizza, soit dans l'IPC ?
+    // manque la méthode pour enlever les pizzas de la kitchen du coup (pour pop
+    // de cooked)
+    while (running_) {
+        if (!clock_.getIdle()) {
+            if (clock_.isNSeconds(fridge_.getRestockTime()))
+                fridge_.restock();
+            {
+                std::unique_lock<std::mutex> lock(mutex_);
+                if (waiting_.empty()
+                    && cooked_.empty()) // va loop à l'infinie car je pop pas
+                                        // dans cooked pour l'instant
+                    clock_.setIdle(true);
+            }
+            tryMakePizzas();
+        } else {
+            if (clock_.isIdle()) {
+                shutdown();
+            }
+        }
+    }
 }
 
-void Kitchen::task(const pizza::APizza pizza) noexcept
+void Kitchen::task(pizza::Pizza pizza) noexcept
 {
-    std::this_thread::sleep_for(std::chrono::seconds(pizza.getCookingTime()));
-    {
-        std::unique_lock<std::mutex> lock(mutex_);
-        cooked_.emplace(std::make_unique<pizza::APizza>(pizza));
-        std::cout << "pizza " << static_cast<int>(pizza.getPizzaType())
-                  << " cooked\n";
-    }
+    std::this_thread::sleep_for(Clock::getSeconds(pizza.getCookingTime()));
+    std::unique_lock<std::mutex> lock(mutex_);
+    cooked_.emplace(pizza);
 }
 
 } // namespace plazza
