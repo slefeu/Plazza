@@ -25,6 +25,12 @@ class Clock
     bool isIdle() const noexcept;
     bool getIdle() const noexcept;
 
+    template <typename T>
+    static auto getSeconds(T seconds) noexcept
+    {
+        return (std::chrono::duration<T, std::ratio<1>>(seconds));
+    }
+
   protected:
   private:
     bool idle_{false};
