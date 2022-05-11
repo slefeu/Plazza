@@ -17,7 +17,7 @@ template <typename ElementType>
 void Factory<ElementType>::addElement(std::string name, ElementType &element) noexcept
 {
     if (elements_.find(name) == elements_.end()) {
-        elements_.emplace(std::make_pair(name, element));
+        elements_.emplace(name, element);
     }
 }
 
