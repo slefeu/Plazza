@@ -21,6 +21,10 @@ add_executable(${PROJECT_NAME}
     ${HEADER_FILES}
 )
 
+IF (WIN32)
+    target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC "C:/mingw64/include")
+ENDIF()
+
 add_subdirectory(Error)
 add_subdirectory(Kitchen)
 
