@@ -38,15 +38,23 @@ double Reception::parseArgument(const std::string& str)
 
 void Reception::initPizzas()
 {
-    pizza::PizzaRegina regina(multiplier_);
-    pizza::PizzaMargarita margarita(multiplier_);
-    pizza::PizzaAmericana americana(multiplier_);
-    pizza::PizzaFantasia fantasia(multiplier_);
-
-    pizzaFactory_.addElement("margarita", margarita);
-    pizzaFactory_.addElement("regina", regina);
-    pizzaFactory_.addElement("americana", americana);
-    pizzaFactory_.addElement("fantasia", fantasia);
+    double multiplier = multiplier_;
+    pizzaFactory_.addElement("margarita", [&multiplier](){
+        pizza::PizzaMargarita margarita(multiplier);
+        return margarita;
+    });
+    pizzaFactory_.addElement("regina", [&multiplier](){
+        pizza::PizzaRegina regina(multiplier);
+        return regina;
+    });
+    pizzaFactory_.addElement("americana", [&multiplier](){
+        pizza::PizzaAmericana americana(multiplier);
+        return americana;
+    });
+    pizzaFactory_.addElement("fantasia", [&multiplier](){
+        pizza::PizzaFantasia fantasia(multiplier);
+        return fantasia;
+    });
 }
 
 Reception::Reception(char** av)

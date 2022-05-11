@@ -64,4 +64,3 @@ SpacesInSquareBrackets: false
 Standard:        Latest
 TabWidth:        8
 UseTab:          Never
-NamespaceIndentationKind: All
