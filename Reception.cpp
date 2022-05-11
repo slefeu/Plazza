@@ -17,6 +17,7 @@
 
 namespace plazza
 {
+
 static bool isDigits(const std::string& str)
 {
     return (str.find_first_not_of("0123456789") == std::string::npos);
@@ -104,8 +105,8 @@ void Reception::executeShell()
         try {
             setUserInput();
             executeCommand();
-        } catch (const Error& e) {
-            std ::cout << e.what() << std ::endl;
+        } catch (const Error& error) {
+            std ::cout << error.what() << std ::endl;
         }
     }
 }
