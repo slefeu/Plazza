@@ -13,47 +13,34 @@
 
 #include "Errors.hpp"
 
-pizza::Pizza Factory::createPizza(const pizza::PizzaType type,
-    const pizza::PizzaSize size,
-    const double multiplier)
+template <typename ElementType>
+void Factory<ElementType>::addElement(std::string name, ElementType &element) noexcept
 {
-    static std::map<pizza::PizzaType,
-        std::function<pizza::Pizza(pizza::PizzaSize, double)>>
-        creator_ = {
-            {pizza::PizzaType::Regina, createRegina},
-            {pizza::PizzaType::Margarita, createMargarita},
-            {pizza::PizzaType::Americana, createAmericana},
-            {pizza::PizzaType::Fantasia, createFantasia},
-        };
-    auto iterator = creator_.find(type);
-
-    if (iterator == creator_.end())
-        throw(ExecutionError("Wrong pizza type."));
-    return (iterator->second(size, multiplier));
+    if (elements_.find(name) == elements_.end()) {
+        elements_.emplace(std::make_pair(name, element));
+    }
 }
 
-pizza::Pizza Factory::createRegina(
-    const pizza::PizzaSize size, const double multiplier)
+template <typename ElementType>
+ElementType Factory<ElementType>::getElement(std::string &name)
 {
-    pizza::Pizza pizza = pizza::PizzaRegina(size, multiplier);
-    return (pizza);
-}
-pizza::Pizza Factory::createMargarita(
-    const pizza::PizzaSize size, const double multiplier)
-{
-    pizza::Pizza pizza = pizza::PizzaMargarita(size, multiplier);
-    return (pizza);
+    if (elements_.find(name) != elements_.end()) {
+        return (elements_[name]);
+    }
+    throw (ExecutionError("Incorrect element name"));
 }
 
-pizza::Pizza Factory::createAmericana(
-    const pizza::PizzaSize size, const double multiplier)
+template <typename ElementType>
+void Factory<ElementType>::removeElement(std::string &name)
 {
-    pizza::Pizza pizza = pizza::PizzaAmericana(size, multiplier);
-    return (pizza);
+    if (elements_.find(name) == elements_.end()) {
+        throw (ExecutionError("Incorrect element name"));
+    }
+    elements_.erase(name);
 }
-pizza::Pizza Factory::createFantasia(
-    const pizza::PizzaSize size, const double multiplier)
+
+template <typename ElementType>
+void Factory<ElementType>::resetFactory() noexcept
 {
-    pizza::Pizza pizza = pizza::PizzaFantasia(size, multiplier);
-    return (pizza);
+    elements_.clear();
 }

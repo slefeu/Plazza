@@ -6,6 +6,9 @@
 */
 
 #include "Reception.hpp"
+#include "DefaultPizzas.hpp"
+#include "Factory.hpp"
+#include "Pizza.hpp"
 
 #include <csignal>
 #include <functional>
@@ -33,13 +36,33 @@ double Reception::parseArgument(const std::string& str)
     return number;
 }
 
+void Reception::initPizzas()
+{
+    pizza::PizzaRegina regina(multiplier_);
+    pizza::PizzaMargarita margarita(multiplier_);
+    pizza::PizzaAmericana americana(multiplier_);
+    pizza::PizzaFantasia fantasia(multiplier_);
+
+    pizzaFactory_.addElement("margarita", margarita);
+    pizzaFactory_.addElement("regina", regina);
+    pizzaFactory_.addElement("americana", americana);
+    pizzaFactory_.addElement("fantasia", fantasia);
+}
+
 Reception::Reception(char** av)
 {
     multiplier_ = parseArgument(av[1]);
     cooks_ = static_cast<int>(parseArgument(av[2]));
     time_ = static_cast<int>(parseArgument(av[3]));
     pizzaTypes_ = {"margarita", "regina", "americana", "fantasia"};
-    pizzaSizes_ = {"S", "M", "L", "XL", "XXL"};
+    pizzaSizes_ = {
+        {"S", pizza::PizzaSize::S},
+        {"M", pizza::PizzaSize::M},
+        {"L", pizza::PizzaSize::L},
+        {"XL", pizza::PizzaSize::XL},
+        {"XXL", pizza::PizzaSize::XXL}
+    };
+    initPizzas();
 }
 
 void Reception::setUserInput() noexcept
@@ -95,8 +118,7 @@ bool Reception::checkPizzaType(std::string& type)
 
 bool Reception::checkPizzaSize(std::string& size)
 {
-    if (std::find(pizzaSizes_.begin(), pizzaSizes_.end(), size)
-        == pizzaSizes_.end())
+    if (pizzaSizes_.find(size) == pizzaSizes_.end())
         return (false);
     return (true);
 }
@@ -141,7 +163,15 @@ bool Reception::checkOrder(std::string &order)
 
 void Reception::orderPizza(std::string &order)
 {
-    
+    std::stringstream stream(trim(order));
+    std::string type;
+    std::string size;
+    std::string number;
+
+    stream >> type >> size >> number;
+    pizza::Pizza pizza = pizzaFactory_.getElement(type);
+    pizza.setPizzaSize(pizzaSizes_.find(size)->second);
+    std::cout << pizza;
 }
 
 void Reception::checkOrderSyntax()
@@ -156,7 +186,7 @@ void Reception::checkOrderSyntax()
         command_.erase(0, pos + 1);
     }
     if (checkOrder(command_))
-        orderPizza(order);
+        orderPizza(command_);
 }
 
 void Reception::executeCommand()

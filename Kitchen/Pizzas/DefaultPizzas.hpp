@@ -14,7 +14,7 @@ namespace pizza
 class PizzaRegina : public Pizza
 {
   public:
-    PizzaRegina(PizzaSize size, double modifier) noexcept;
+    PizzaRegina(double modifier) noexcept;
     PizzaRegina(const PizzaRegina& other) noexcept = default;
     PizzaRegina(PizzaRegina&& other) noexcept = default;
     ~PizzaRegina() noexcept = default;
@@ -29,7 +29,7 @@ class PizzaRegina : public Pizza
 class PizzaMargarita : public Pizza
 {
   public:
-    PizzaMargarita(PizzaSize size, double modifier) noexcept;
+    PizzaMargarita(double modifier) noexcept;
     PizzaMargarita(const PizzaMargarita& other) noexcept = default;
     PizzaMargarita(PizzaMargarita&& other) noexcept = default;
     ~PizzaMargarita() noexcept = default;
@@ -44,7 +44,7 @@ class PizzaMargarita : public Pizza
 class PizzaAmericana : public Pizza
 {
   public:
-    PizzaAmericana(PizzaSize size, double modifier) noexcept;
+    PizzaAmericana(double modifier) noexcept;
     PizzaAmericana(const PizzaAmericana& other) noexcept = default;
     PizzaAmericana(PizzaAmericana&& other) noexcept = default;
     ~PizzaAmericana() noexcept = default;
@@ -59,7 +59,7 @@ class PizzaAmericana : public Pizza
 class PizzaFantasia : public Pizza
 {
   public:
-    PizzaFantasia(PizzaSize size, double modifier) noexcept;
+    PizzaFantasia(double modifier) noexcept;
     PizzaFantasia(const PizzaFantasia& other) noexcept = default;
     PizzaFantasia(PizzaFantasia&& other) noexcept = default;
     ~PizzaFantasia() noexcept = default;

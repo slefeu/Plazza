@@ -9,6 +9,9 @@
 
 #include <string>
 #include <vector>
+#include <map>
+#include "Factory.hpp"
+#include "Pizza.hpp"
 
 namespace plazza
 {
@@ -31,6 +34,7 @@ class Reception
     // methods
     static double parseArgument(const std::string& str);
     static bool checkPizzaNumber(std::string);
+    void initPizzas();
     bool checkPizzaType(std::string &);
     bool checkPizzaSize(std::string &);
     void executeCommand();
@@ -44,10 +48,11 @@ class Reception
     // attributes
     std::string command_;
     std::vector<std::string> pizzaTypes_;
-    std::vector<std::string> pizzaSizes_;
+    std::map<std::string, pizza::PizzaSize> pizzaSizes_;
     int cooks_ = 0;
     double multiplier_ = 0;
     int time_ = 0;
     bool isEnd_ = false;
+    Factory<pizza::Pizza> pizzaFactory_;
 };
 }
