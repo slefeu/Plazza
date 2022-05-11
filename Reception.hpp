@@ -42,13 +42,16 @@ class Reception
     void checkOrderSyntax();
     bool checkOrder(std::string &);
     void setUserInput() noexcept;
+    void addPizza();
     void exit() noexcept;
     void log();
+    void list();
     void status();
     // attributes
     std::string command_;
     std::vector<std::string> pizzaTypes_;
     std::map<std::string, pizza::PizzaSize> pizzaSizes_;
+    std::map<std::string, pizza::Ingredients> ingredients_;
     int cooks_ = 0;
     double multiplier_ = 0;
     int time_ = 0;

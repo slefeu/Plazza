@@ -10,9 +10,9 @@
 #include <functional>
 #include <iostream>
 #include <map>
-#include <functional>
 
 #include "Errors.hpp"
+
 
 template <typename ElementType>
 void Factory<ElementType>::addElement(
@@ -45,4 +45,11 @@ template <typename ElementType>
 void Factory<ElementType>::resetFactory() noexcept
 {
     elements_.clear();
+}
+
+template <typename ElementType>
+std::map<std::string, std::function<ElementType()>>&
+Factory<ElementType>::getAll() noexcept
+{
+    return (elements_);
 }
