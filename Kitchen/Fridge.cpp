@@ -11,7 +11,6 @@
 
 namespace plazza
 {
-
 Fridge::Fridge(unsigned int time) noexcept
     : restock_time_(time)
 {

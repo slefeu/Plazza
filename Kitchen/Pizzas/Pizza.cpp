@@ -9,7 +9,6 @@
 
 namespace pizza
 {
-
 Pizza::Pizza(PizzaType type, double time) noexcept
     : type_(type)
     , size_(PizzaSize::S)
@@ -37,12 +36,12 @@ PizzaSize Pizza::getPizzaSize() const noexcept
     return (size_);
 }
 
-void Pizza::setCookingTime(CookingTime &time) noexcept
+void Pizza::setCookingTime(CookingTime& time) noexcept
 {
     cooking_time_ = time;
 }
 
-void Pizza::setPizzaType(PizzaType &type) noexcept
+void Pizza::setPizzaType(PizzaType& type) noexcept
 {
     type_ = type;
 }
@@ -52,7 +51,7 @@ void Pizza::setPizzaSize(PizzaSize size) noexcept
     size_ = size;
 }
 
-void Pizza::addIngredients(Ingredients &ingredient) noexcept
+void Pizza::addIngredients(Ingredients& ingredient) noexcept
 {
     ingredients_.emplace_back(ingredient);
 }
@@ -72,7 +71,6 @@ std::ostream& operator<<(std::ostream& output, Ingredients rhs) noexcept
     }
     return (output);
 }
-
 
 std::ostream& operator<<(std::ostream& output, PizzaSize size) noexcept
 {
@@ -98,12 +96,12 @@ std::ostream& operator<<(std::ostream& output, PizzaType type) noexcept
     return (output);
 }
 
-std::ostream& operator<<(std::ostream& output, Pizza &pizza) noexcept
+std::ostream& operator<<(std::ostream& output, Pizza& pizza) noexcept
 {
     output << "Type : " << pizza.getPizzaType() << std::endl;
     output << "Size : " << pizza.getPizzaSize() << std::endl;
     output << "Ingredients : " << std::endl;
-    for(const auto& ingredient: pizza.getIngredients()) {
+    for (const auto& ingredient : pizza.getIngredients()) {
         output << "- " << ingredient << std::endl;
     }
     return (output);

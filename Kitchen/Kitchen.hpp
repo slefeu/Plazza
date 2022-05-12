@@ -15,7 +15,6 @@
 
 namespace plazza
 {
-
 class Kitchen
 {
   public:

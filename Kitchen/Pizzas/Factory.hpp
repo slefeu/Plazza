@@ -6,8 +6,9 @@
 */
 
 #pragma once
-#include <memory>
+#include <functional>
 #include <map>
+#include <memory>
 
 #include "Pizza.hpp"
 
@@ -23,14 +24,15 @@ class Factory
     Factory& operator=(const Factory& rhs) noexcept = delete;
     Factory& operator=(Factory&& rhs) noexcept = delete;
 
-    void addElement(std::string, ElementType &) noexcept;
-    ElementType getElement(std::string &);
-    void removeElement(std::string &);
+    void addElement(std::string, std::function<ElementType()>) noexcept;
+    ElementType getElement(std::string&);
+    void removeElement(std::string&);
+    std::map<std::string, std::function<ElementType()>>& getAll() noexcept;
     void resetFactory() noexcept;
 
   protected:
   private:
-    std::map<std::string, ElementType> elements_;
+    std::map<std::string, std::function<ElementType()>> elements_;
 };
 
 template class Factory<pizza::Pizza>;

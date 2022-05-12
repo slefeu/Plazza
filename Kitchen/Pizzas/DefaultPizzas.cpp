@@ -9,7 +9,6 @@
 
 namespace pizza
 {
-
 PizzaRegina::PizzaRegina(double modifier) noexcept
     : Pizza(pizza::PizzaType::Regina, (2 * modifier))
 {
