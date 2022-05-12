@@ -145,7 +145,7 @@ void Reception::addPizza()
             for (auto& value : ingredients) {
                 pizza.addIngredients(value);
             }
-            return pizza;
+            return (pizza);
         });
 }
 
