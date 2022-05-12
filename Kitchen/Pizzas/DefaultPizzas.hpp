@@ -10,7 +10,6 @@
 
 namespace pizza
 {
-
 class PizzaRegina : public Pizza
 {
   public:

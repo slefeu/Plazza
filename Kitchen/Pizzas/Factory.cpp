@@ -13,7 +13,6 @@
 
 #include "Errors.hpp"
 
-
 template <typename ElementType>
 void Factory<ElementType>::addElement(
     std::string name, std::function<ElementType()> element) noexcept

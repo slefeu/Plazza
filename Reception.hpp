@@ -7,9 +7,10 @@
 
 #pragma once
 
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
+
 #include "Factory.hpp"
 #include "Pizza.hpp"
 
@@ -27,7 +28,7 @@ class Reception
     Reception& operator=(Reception&& rhs) noexcept = default;
 
     void executeShell();
-    static std::string &trim(std::string &);
+    static std::string& trim(std::string&);
 
   protected:
   private:
@@ -35,12 +36,12 @@ class Reception
     static double parseArgument(const std::string& str);
     static bool checkPizzaNumber(std::string);
     void initPizzas();
-    bool checkPizzaType(std::string &);
-    bool checkPizzaSize(std::string &);
+    bool checkPizzaType(std::string&);
+    bool checkPizzaSize(std::string&);
     void executeCommand();
-    void orderPizza(std::string &);
+    void orderPizza(std::string&);
     void checkOrderSyntax();
-    bool checkOrder(std::string &);
+    bool checkOrder(std::string&);
     void setUserInput() noexcept;
     void addPizza();
     void exit() noexcept;

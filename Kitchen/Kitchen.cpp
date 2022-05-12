@@ -15,7 +15,6 @@
 
 namespace plazza
 {
-
 Kitchen::Kitchen(double multiplier,
     unsigned int nb_cooks,
     unsigned int restock_time) noexcept
@@ -35,7 +34,7 @@ void Kitchen::addWaitPizza(const pizza::PizzaType type,
     const pizza::PizzaSize size,
     const double multiplier)
 {
-    //waiting_.emplace(Factory::createPizza(type, size, multiplier));
+    // waiting_.emplace(Factory::createPizza(type, size, multiplier));
 }
 
 std::optional<threads::Task> Kitchen::createTask() noexcept

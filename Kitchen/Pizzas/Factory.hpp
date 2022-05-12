@@ -6,9 +6,9 @@
 */
 
 #pragma once
+#include <functional>
 #include <map>
 #include <memory>
-#include <functional>
 
 #include "Pizza.hpp"
 
@@ -27,7 +27,7 @@ class Factory
     void addElement(std::string, std::function<ElementType()>) noexcept;
     ElementType getElement(std::string&);
     void removeElement(std::string&);
-    std::map<std::string, std::function<ElementType()>> &getAll() noexcept;
+    std::map<std::string, std::function<ElementType()>>& getAll() noexcept;
     void resetFactory() noexcept;
 
   protected:
