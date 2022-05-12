@@ -12,10 +12,15 @@
 
 namespace pizza
 {
-
 using CookingTime = double;
 static constexpr unsigned int TYPES = 4;
-enum class PizzaType { Regina = 1, Margarita = 2, Americana = 4, Fantasia = 8 };
+enum class PizzaType {
+    Regina = 1,
+    Margarita = 2,
+    Americana = 4,
+    Fantasia = 8,
+    Custom = 16
+};
 enum class PizzaSize { S = 1, M = 2, L = 4, XL = 8, XXL = 16 };
 enum class Ingredients {
     Dough,
@@ -45,10 +50,10 @@ class Pizza
     PizzaType getPizzaType() const noexcept;
     std::vector<Ingredients> getIngredients() const noexcept;
     PizzaSize getPizzaSize() const noexcept;
-    void setCookingTime(CookingTime &) noexcept;
-    void setPizzaType(PizzaType &) noexcept;
+    void setCookingTime(CookingTime&) noexcept;
+    void setPizzaType(PizzaType&) noexcept;
     void setPizzaSize(PizzaSize) noexcept;
-    void addIngredients(Ingredients &) noexcept;
+    void addIngredients(Ingredients&) noexcept;
 
   protected:
     PizzaType type_;
@@ -62,5 +67,5 @@ class Pizza
 std::ostream& operator<<(std::ostream& output, Ingredients rhs) noexcept;
 std::ostream& operator<<(std::ostream& output, PizzaSize size) noexcept;
 std::ostream& operator<<(std::ostream& output, PizzaType type) noexcept;
-std::ostream& operator<<(std::ostream& output, Pizza &pizza) noexcept;
+std::ostream& operator<<(std::ostream& output, Pizza& pizza) noexcept;
 } // namespace pizza

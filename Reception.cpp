@@ -6,9 +6,6 @@
 */
 
 #include "Reception.hpp"
-#include "DefaultPizzas.hpp"
-#include "Factory.hpp"
-#include "Pizza.hpp"
 
 #include <csignal>
 #include <functional>
@@ -16,11 +13,13 @@
 #include <map>
 #include <sstream>
 
+#include "DefaultPizzas.hpp"
 #include "Errors.hpp"
+#include "Factory.hpp"
+#include "Pizza.hpp"
 
 namespace plazza
 {
-
 static bool isDigits(const std::string& str)
 {
     return (str.find_first_not_of("0123456789") == std::string::npos);
@@ -39,19 +38,19 @@ double Reception::parseArgument(const std::string& str)
 void Reception::initPizzas()
 {
     double multiplier = multiplier_;
-    pizzaFactory_.addElement("margarita", [&multiplier](){
+    pizzaFactory_.addElement("margarita", [&multiplier]() {
         pizza::PizzaMargarita margarita(multiplier);
         return margarita;
     });
-    pizzaFactory_.addElement("regina", [&multiplier](){
+    pizzaFactory_.addElement("regina", [&multiplier]() {
         pizza::PizzaRegina regina(multiplier);
         return regina;
     });
-    pizzaFactory_.addElement("americana", [&multiplier](){
+    pizzaFactory_.addElement("americana", [&multiplier]() {
         pizza::PizzaAmericana americana(multiplier);
         return americana;
     });
-    pizzaFactory_.addElement("fantasia", [&multiplier](){
+    pizzaFactory_.addElement("fantasia", [&multiplier]() {
         pizza::PizzaFantasia fantasia(multiplier);
         return fantasia;
     });
@@ -63,13 +62,20 @@ Reception::Reception(char** av)
     cooks_ = static_cast<int>(parseArgument(av[2]));
     time_ = static_cast<int>(parseArgument(av[3]));
     pizzaTypes_ = {"margarita", "regina", "americana", "fantasia"};
-    pizzaSizes_ = {
-        {"S", pizza::PizzaSize::S},
+    pizzaSizes_ = {{"S", pizza::PizzaSize::S},
         {"M", pizza::PizzaSize::M},
         {"L", pizza::PizzaSize::L},
         {"XL", pizza::PizzaSize::XL},
-        {"XXL", pizza::PizzaSize::XXL}
-    };
+        {"XXL", pizza::PizzaSize::XXL}};
+    ingredients_ = {{"Dough", pizza::Ingredients::Dough},
+        {"Tomato", pizza::Ingredients::Tomato},
+        {"Gruyere", pizza::Ingredients::Gruyere},
+        {"Ham", pizza::Ingredients::Ham},
+        {"Mushrooms", pizza::Ingredients::Mushrooms},
+        {"Steak", pizza::Ingredients::Steak},
+        {"Eggplant", pizza::Ingredients::Eggplant},
+        {"GoatCheese", pizza::Ingredients::GoatCheese},
+        {"ChiefLove", pizza::Ingredients::ChiefLove}};
     initPizzas();
 }
 
@@ -98,6 +104,49 @@ void Reception::log()
 
 void Reception::status()
 {
+}
+
+void Reception::list() noexcept
+{
+    std::map<std::string, std::function<pizza::Pizza()>> pizzaList =
+        pizzaFactory_.getAll();
+    std::cout << "Pizza list : " << std::endl;
+    for (auto const& [key, val] : pizzaList) {
+        std::cout << "- " << key << std::endl;
+    }
+}
+
+void Reception::addPizza()
+{
+    std::stringstream stream(trim(command_));
+    std::string name;
+    std::string ingredient;
+    std::vector<pizza::Ingredients> ingredients;
+    double pizza_multiplier = 0;
+    double multiplier = multiplier_;
+
+    if (std::count(command_.begin(), command_.end(), ' ') < 3) {
+        throw(ExecutionError(
+            "Usage : addPizza <name> <multiplier> ingredients [ingredients]"));
+    }
+    stream >> name >> name >> pizza_multiplier;
+    while (!stream.eof()) {
+        stream >> ingredient;
+        if (ingredients_.find(ingredient) == ingredients_.end()) {
+            throw(ExecutionError("Incorrect ingredient : " + ingredient + "\n"
+                                 + validIgredients.data()));
+        }
+        ingredients.emplace_back(ingredients_.find(ingredient)->second);
+    }
+    pizzaFactory_.addElement(
+        name, [&multiplier, &pizza_multiplier, &ingredients]() {
+            pizza::Pizza pizza(
+                pizza::PizzaType::Custom, multiplier * pizza_multiplier);
+            for (auto& value : ingredients) {
+                pizza.addIngredients(value);
+            }
+            return pizza;
+        });
 }
 
 std::string& Reception::trim(std::string& string)
@@ -140,12 +189,12 @@ bool Reception::checkPizzaNumber(std::string number)
         return (false);
     number.erase(0, 1);
     if (std::find_if_not(number.begin(), number.end(), ::isdigit)
-               != number.end())
+        != number.end())
         return (false);
     return (true);
 }
 
-bool Reception::checkOrder(std::string &order)
+bool Reception::checkOrder(std::string& order)
 {
     std::stringstream stream(trim(order));
     std::string type;
@@ -155,21 +204,21 @@ bool Reception::checkOrder(std::string &order)
     try {
         stream >> type >> size >> number;
         if (type.empty() || size.empty() || number.empty())
-            throw(ExecutionError("Incorrect order : " + order));
+            throw(ExecutionError("Invalid command : " + order));
         if (!checkPizzaType(type))
-            throw(ExecutionError("Incorrect pizza type : " + type));
+            throw(ExecutionError("Invalid pizza type : " + type));
         if (!checkPizzaSize(size))
-            throw(ExecutionError("Incorrect pizza size : " + size));
+            throw(ExecutionError("Invalid pizza size : " + size));
         if (!checkPizzaNumber(number))
-            throw(ExecutionError("Incorrect pizza number : " + number));
-    } catch (const ExecutionError &ex) {
+            throw(ExecutionError("Invalid pizza number : " + number));
+    } catch (const ExecutionError& ex) {
         std::cerr << "Error : " << ex.what() << std::endl;
         return (false);
     }
     return (true);
 }
 
-void Reception::orderPizza(std::string &order)
+void Reception::orderPizza(std::string& order)
 {
     std::stringstream stream(trim(order));
     std::string type;
@@ -202,17 +251,22 @@ void Reception::executeCommand()
     static std::map<std::string, void (Reception::*)()> creator = {
         {"exit", &Reception::exit},
         {"log", &Reception::log},
+        {"list", &Reception::list},
         {"status", &Reception::status},
+        {"addPizza", &Reception::addPizza},
     };
-    // rajouter la commande pour lancer la commande de pizzas
 
     command_ = trim(command_);
-    auto iterator = creator.find(command_);
 
     if (command_.empty())
         return;
-    if (iterator != creator.end())
-        return (((*this).*(iterator->second))());
+    for (auto const& [key, val] : creator) {
+        if (command_.rfind(key, 0) == 0
+            && (command_[key.length()] == ' '
+                || command_[key.length()] == '\0')) {
+            return (((*this).*(val))());
+        }
+    }
     checkOrderSyntax();
 }
 

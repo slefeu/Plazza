@@ -9,7 +9,6 @@
 
 namespace threads
 {
-
 ThreadPool::ThreadPool(unsigned int nbThreads) noexcept
 {
     while (nbThreads > workers_.size()) {

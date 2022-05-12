@@ -16,7 +16,6 @@
 
 namespace threads
 {
-
 using Task = std::function<void(void)>;
 
 class ThreadPool
