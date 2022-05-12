@@ -211,13 +211,13 @@ bool Reception::checkOrder(std::string &order)
     try {
         stream >> type >> size >> number;
         if (type.empty() || size.empty() || number.empty())
-            throw(ExecutionError("Incorrect order : " + order));
+            throw(ExecutionError("Invalid command : " + order));
         if (!checkPizzaType(type))
-            throw(ExecutionError("Incorrect pizza type : " + type));
+            throw(ExecutionError("Invalid pizza type : " + type));
         if (!checkPizzaSize(size))
-            throw(ExecutionError("Incorrect pizza size : " + size));
+            throw(ExecutionError("Invalid pizza size : " + size));
         if (!checkPizzaNumber(number))
-            throw(ExecutionError("Incorrect pizza number : " + number));
+            throw(ExecutionError("Invalid pizza number : " + number));
     } catch (const ExecutionError &ex) {
         std::cerr << "Error : " << ex.what() << std::endl;
         return (false);
@@ -267,9 +267,9 @@ void Reception::executeCommand()
 
     if (command_.empty())
         return;
-    for (auto const& [key, val] : creator)
-    {
-        if (command_.rfind(key, 0) == 0) {
+    for (auto const& [key, val] : creator) {
+        if (command_.rfind(key, 0) == 0
+            && (command_[key.length()] == ' ' || command_[key.length()] == '\0')) {
             return (((*this).*(val))());
         }
     }
