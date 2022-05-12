@@ -106,7 +106,7 @@ void Reception::status()
 {
 }
 
-void Reception::list()
+void Reception::list() noexcept
 {
     std::map<std::string, std::function<pizza::Pizza()>> pizzaList =
         pizzaFactory_.getAll();
@@ -133,11 +133,8 @@ void Reception::addPizza()
     while (!stream.eof()) {
         stream >> ingredient;
         if (ingredients_.find(ingredient) == ingredients_.end()) {
-            throw(
-                ExecutionError(
-                    "Incorrect ingredient : " + ingredient
-                    + "\nValid ingredients : Dough, Tomato, Gruyere, Ham, "
-                      "Mushrooms, Steak, Eggplant, GoatCheese, ChiefLove"));
+            throw(ExecutionError("Incorrect ingredient : " + ingredient + "\n"
+                                 + validIgredients.data()));
         }
         ingredients.emplace_back(ingredients_.find(ingredient)->second);
     }

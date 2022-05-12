@@ -16,6 +16,9 @@
 
 namespace plazza
 {
+static constexpr std::string_view validIgredients =
+    "Valid ingredients : Dough, Tomato, Gruyere, Ham, "
+    "Mushrooms, Steak, Eggplant, GoatCheese, ChiefLove";
 class Reception
 {
   public:
@@ -46,7 +49,7 @@ class Reception
     void addPizza();
     void exit() noexcept;
     void log();
-    void list();
+    void list() noexcept;
     void status();
     // attributes
     std::string command_;
