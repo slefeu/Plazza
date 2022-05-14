@@ -7,6 +7,7 @@
 
 #include "Serializer.hpp"
 #include <map>
+#include <cmath>
 
 std::bitset<64> PizzaSerializer::enumToBitset(
     unsigned int enum_value, std::bitset<64> value) noexcept
@@ -86,7 +87,7 @@ std::vector<pizza::Ingredients> PizzaSerializer::bitsetToIngredients(
 
     for (std::size_t it = 0; it < 9; ++it) {
         if (data[it]) {
-            ingredients.emplace_back(static_cast<pizza::Ingredients>(it));
+            ingredients.emplace_back(static_cast<pizza::Ingredients>(::pow(2, it)));
         }
     }
     return (ingredients);

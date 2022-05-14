@@ -28,7 +28,7 @@ void test_custom()
 
     auto objectAttribute = PizzaSerializer::serializePizza(pizza);
     auto new_pizza = PizzaSerializer::deserializePizza(objectAttribute);
-    std::cout << pizza << std::endl;
+    std::cout << new_pizza << std::endl;
 }
 
 int main()
@@ -47,7 +47,7 @@ int main()
     auto pizza = pizza::PizzaRegina(10.3);
     auto objectAttribute = PizzaSerializer::serializePizza(pizza);
     auto new_pizza = PizzaSerializer::deserializePizza(objectAttribute);
-    std::cout << pizza << std::endl;
+    std::cout << new_pizza << std::endl;
     test_custom();
     return (0);
 }
