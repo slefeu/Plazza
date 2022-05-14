@@ -23,8 +23,11 @@ class PizzaSerializer
     PizzaSerializer& operator=(const PizzaSerializer& rhs) noexcept = default;
     PizzaSerializer& operator=(PizzaSerializer&& rhs) noexcept = default;
 
-    static std::array<std::bitset<64>, 5> serialize(
+    static std::array<std::bitset<64>, 5> serializePizza(
         const pizza::Pizza&) noexcept;
+    static std::bitset<8> serializeCommand(char name) noexcept;
+    static pizza::Pizza deserializePizza(
+        const std::array<std::bitset<64>, 5>& data) noexcept;
 
   protected:
   private:
@@ -32,4 +35,9 @@ class PizzaSerializer
     static std::bitset<64> enumlistToBitset(
         const std::vector<pizza::Ingredients>& ingredients) noexcept;
     static std::size_t getDoubleFractional(double value) noexcept;
+    static std::size_t bitsetToInt(const std::bitset<64>& data);
+    static double findCookingTime(const std::bitset<64>& integral,
+        const std::bitset<64>& fractional) noexcept;
+    static std::vector<pizza::Ingredients> bitsetToIngredients(
+        const std::bitset<64>& data) noexcept;
 };

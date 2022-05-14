@@ -46,12 +46,12 @@ void Pizza::setPizzaType(PizzaType& type) noexcept
     type_ = type;
 }
 
-void Pizza::setPizzaSize(PizzaSize size) noexcept
+void Pizza::setSize(PizzaSize size) noexcept
 {
     size_ = size;
 }
 
-void Pizza::addIngredients(Ingredients& ingredient) noexcept
+void Pizza::addIngredient(Ingredients& ingredient) noexcept
 {
     ingredients_.emplace_back(ingredient);
 }

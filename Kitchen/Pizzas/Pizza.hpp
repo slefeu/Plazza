@@ -51,8 +51,8 @@ class Pizza
     PizzaSize getPizzaSize() const noexcept;
     void setCookingTime(CookingTime&) noexcept;
     void setPizzaType(PizzaType&) noexcept;
-    void setPizzaSize(PizzaSize) noexcept;
-    void addIngredients(Ingredients&) noexcept;
+    void setSize(PizzaSize) noexcept;
+    void addIngredient(Ingredients&) noexcept;
 
   protected:
     PizzaType type_;

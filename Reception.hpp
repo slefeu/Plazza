@@ -13,6 +13,7 @@
 
 #include "Factory.hpp"
 #include "Pizza.hpp"
+#include "Serializer.hpp"
 
 namespace plazza
 {
