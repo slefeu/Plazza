@@ -34,5 +34,3 @@ class Factory
   private:
     std::map<std::string, std::function<ElementType()>> elements_;
 };
-
-template class Factory<pizza::Pizza>;
