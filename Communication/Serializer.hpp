@@ -23,11 +23,12 @@ class PizzaSerializer
     PizzaSerializer& operator=(const PizzaSerializer& rhs) noexcept = default;
     PizzaSerializer& operator=(PizzaSerializer&& rhs) noexcept = default;
 
-    static std::array<std::bitset<64>, 5> serializePizza(
+    static constexpr int ARRAY_SIZE = 5;
+    static std::array<std::bitset<64>, ARRAY_SIZE> serializePizza(
         const pizza::Pizza&) noexcept;
     static std::bitset<8> serializeCommand(char name) noexcept;
     static pizza::Pizza deserializePizza(
-        const std::array<std::bitset<64>, 5>& data) noexcept;
+        const std::array<std::bitset<64>, ARRAY_SIZE>& data) noexcept;
 
   protected:
   private:

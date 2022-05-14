@@ -6,8 +6,9 @@
 */
 
 #include "Serializer.hpp"
-#include <map>
+
 #include <cmath>
+#include <map>
 
 std::bitset<64> PizzaSerializer::enumToBitset(
     unsigned int enum_value, std::bitset<64> value) noexcept
@@ -19,8 +20,7 @@ std::bitset<64> PizzaSerializer::enumToBitset(
 std::bitset<64> PizzaSerializer::enumlistToBitset(
     const std::vector<pizza::Ingredients>& ingredients) noexcept
 {
-    std::bitset<64> value(std::string(
-        "0000000000000000000000000000000000000000000000000000000000000000"));
+    std::bitset<64> value;
     for (auto it : ingredients) {
         value = enumToBitset(static_cast<unsigned int>(it), value);
     }
@@ -36,16 +36,15 @@ std::size_t PizzaSerializer::getDoubleFractional(double value) noexcept
     return (new_value);
 }
 
-std::array<std::bitset<64>, 5> PizzaSerializer::serializePizza(
-    const pizza::Pizza& pizza) noexcept
+std::array<std::bitset<64>, PizzaSerializer::ARRAY_SIZE>
+PizzaSerializer::serializePizza(const pizza::Pizza& pizza) noexcept
 {
     std::array<std::bitset<64>, 5> packed = {};
-    std::bitset<64> default_bits(std::string(
-        "0000000000000000000000000000000000000000000000000000000000000000 "));
+    std::bitset<64> default_bits;
     double time = pizza.getCookingTime();
-    std::bitset<64> integral(time);
-    std::bitset<64> fractional(
-        getDoubleFractional(time - static_cast<std::size_t>(time)));
+    auto integral_value = static_cast<unsigned int>(time);
+    std::bitset<64> integral(integral_value);
+    std::bitset<64> fractional(getDoubleFractional(time - integral_value));
 
     packed[0] =
         enumToBitset(static_cast<int>(pizza.getPizzaType()), default_bits);
@@ -72,7 +71,7 @@ std::size_t PizzaSerializer::bitsetToInt(const std::bitset<64>& data)
 double PizzaSerializer::findCookingTime(
     const std::bitset<64>& integral, const std::bitset<64>& fractional) noexcept
 {
-    auto first = integral.to_ulong();
+    auto first = static_cast<unsigned int>(integral.to_ulong());
     auto second = static_cast<double>(fractional.to_ulong());
 
     while (second >= 1)
@@ -87,14 +86,16 @@ std::vector<pizza::Ingredients> PizzaSerializer::bitsetToIngredients(
 
     for (std::size_t it = 0; it < 9; ++it) {
         if (data[it]) {
-            ingredients.emplace_back(static_cast<pizza::Ingredients>(::pow(2, it)));
+            ingredients.emplace_back(
+                static_cast<pizza::Ingredients>(std::pow(2, it)));
         }
     }
     return (ingredients);
 }
 
 pizza::Pizza PizzaSerializer::deserializePizza(
-    const std::array<std::bitset<64>, 5>& data) noexcept
+    const std::array<std::bitset<64>, PizzaSerializer::ARRAY_SIZE>&
+        data) noexcept
 {
     auto type = static_cast<pizza::PizzaType>(data[0].to_ulong());
     auto size = static_cast<pizza::PizzaSize>(data[1].to_ulong());
