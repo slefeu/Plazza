@@ -99,22 +99,10 @@ pizza::Pizza PizzaSerializer::deserializePizza(
     auto size = static_cast<pizza::PizzaSize>(data[1].to_ulong());
     auto ingredients = bitsetToIngredients(data[2]);
     auto multiplier = findCookingTime(data[3], data[4]);
-    pizza::Pizza pizza;
+    pizza::Pizza pizza(type, multiplier);
 
-    static std::map<pizza::PizzaType, pizza::Pizza(double)> creator_ = {
-        {pizza::PizzaType::Regina, pizza::PizzaRegina()},
-        {pizza::PizzaType::Margarita, pizza::PizzaMargarita()},
-        {pizza::PizzaType::Americana, pizza::PizzaAmericana()},
-        {pizza::PizzaType::Fantasia, pizza::PizzaFantasia()},
-    };
-    auto iterator = creator_.find(type);
-
-    if (iterator == creator_.end()) {
-        auto pizza = pizza::Pizza(pizza::PizzaType::Custom, multiplier);
-        for (auto it : ingredients)
-            pizza.addIngredient(it);
-    } else
-        pizza = iterator->second(multiplier);
+    for (auto it : ingredients)
+        pizza.addIngredient(it);
     pizza.setSize(size);
     return (pizza);
 }

@@ -13,6 +13,24 @@
 
 #include <vector>
 
+void test_custom()
+{
+    std::vector<pizza::Ingredients> ingredients = {
+        pizza::Ingredients::Dough,
+        pizza::Ingredients::Mushrooms,
+        pizza::Ingredients::Steak,
+        pizza::Ingredients::Ham
+    };
+    auto pizza = pizza::Pizza(pizza::PizzaType::Custom, 10.3);
+    pizza.setSize(pizza::PizzaSize::L);
+    for (auto it : ingredients)
+        pizza.addIngredient(it);
+
+    auto objectAttribute = PizzaSerializer::serializePizza(pizza);
+    auto new_pizza = PizzaSerializer::deserializePizza(objectAttribute);
+    std::cout << pizza << std::endl;
+}
+
 int main()
 {
     // if (ac != 4) {
@@ -29,5 +47,7 @@ int main()
     auto pizza = pizza::PizzaRegina(10.3);
     auto objectAttribute = PizzaSerializer::serializePizza(pizza);
     auto new_pizza = PizzaSerializer::deserializePizza(objectAttribute);
+    std::cout << pizza << std::endl;
+    test_custom();
     return (0);
 }
