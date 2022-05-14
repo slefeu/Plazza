@@ -16,7 +16,9 @@
 #include "DefaultPizzas.hpp"
 #include "Errors.hpp"
 #include "Factory.hpp"
+#include "Kitchen.hpp"
 #include "Pizza.hpp"
+#include "Process.hpp"
 
 namespace plazza
 {
@@ -282,4 +284,18 @@ void Reception::executeShell()
         }
     }
 }
+
+void Reception::createKitchen()
+{
+    Process process;
+
+    if (process.isChild()) {
+        Kitchen kitchen(multiplier_, cooks_, time_);
+        kitchen.run();
+        process.kill();
+    } else {
+        kitchens_.push_back(process);
+    }
+}
+
 } // namespace plazza

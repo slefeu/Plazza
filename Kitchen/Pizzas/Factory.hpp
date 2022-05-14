@@ -17,12 +17,12 @@ class Factory
 {
   public:
     Factory() noexcept = default;
-    Factory(const Factory& other) noexcept = delete;
-    Factory(Factory&& other) noexcept = delete;
+    Factory(const Factory& other) noexcept = default;
+    Factory(Factory&& other) noexcept = default;
     ~Factory() noexcept = default;
 
-    Factory& operator=(const Factory& rhs) noexcept = delete;
-    Factory& operator=(Factory&& rhs) noexcept = delete;
+    Factory& operator=(const Factory& rhs) noexcept = default;
+    Factory& operator=(Factory&& rhs) noexcept = default;
 
     void addElement(std::string, std::function<ElementType()>) noexcept;
     ElementType getElement(std::string&);
@@ -34,5 +34,3 @@ class Factory
   private:
     std::map<std::string, std::function<ElementType()>> elements_;
 };
-
-template class Factory<pizza::Pizza>;

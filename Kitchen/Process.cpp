@@ -14,6 +14,8 @@
 #include <iostream>
 #include <memory>
 
+namespace plazza
+{
 Process::Process() noexcept
 {
     pid_ = ::fork();
@@ -46,4 +48,14 @@ bool Process::isRunning() const
         return false;
     }
     return ret == 0;
+}
+
+void Process::kill() const
+{
+    if (!isChild()) {
+        ::kill(pid_, SIGKILL);
+    } else {
+        ::exit(0);
+    }
+}
 }

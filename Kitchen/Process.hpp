@@ -9,6 +9,8 @@
 
 #include <unistd.h>
 
+namespace plazza
+{
 class Process
 {
   public:
@@ -21,7 +23,9 @@ class Process
     void wait() const noexcept;
     bool isChild() const;
     bool isRunning() const;
+    void kill() const;
 
   private:
     pid_t pid_;
 };
+}

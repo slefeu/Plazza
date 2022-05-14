@@ -13,9 +13,11 @@
 
 #include "Factory.hpp"
 #include "Pizza.hpp"
+#include "Process.hpp"
 
 namespace plazza
 {
+template class Factory<pizza::Pizza>;
 static constexpr std::string_view validIgredients =
     "Valid ingredients : Dough, Tomato, Gruyere, Ham, "
     "Mushrooms, Steak, Eggplant, GoatCheese, ChiefLove";
@@ -51,9 +53,11 @@ class Reception
     void log();
     void list() noexcept;
     void status();
+    void createKitchen();
     // attributes
     std::string command_;
     std::vector<std::string> pizzaTypes_;
+    std::vector<Process> kitchens_;
     std::map<std::string, pizza::PizzaSize> pizzaSizes_;
     std::map<std::string, pizza::Ingredients> ingredients_;
     int cooks_ = 0;
