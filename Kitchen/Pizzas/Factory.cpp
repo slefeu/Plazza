@@ -52,3 +52,5 @@ Factory<ElementType>::getAll() noexcept
 {
     return (elements_);
 }
+
+template class Factory<pizza::Pizza>;
