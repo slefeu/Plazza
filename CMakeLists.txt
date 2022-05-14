@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(CMAKE_CXX_CLANG_TIDY "clang-tidy")
 
-set(CXXFLAGS "-pthread")
+set(CXXFLAGS "-lpthread")
 
 set(CMAKE_CXX_FLAGS_DEBUG_INIT "-g")
 

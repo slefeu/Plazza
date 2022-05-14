@@ -6,7 +6,6 @@ add_library(
     Fridge.cpp
     Pizzas/DefaultPizzas.cpp
     Pizzas/Pizza.cpp
-    Pizzas/Factory.cpp
 )
 
 target_include_directories(Kitchen PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
