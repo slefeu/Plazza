@@ -24,6 +24,7 @@ class Process
     bool isChild() const;
     bool isRunning() const;
     void kill() const;
+    pid_t getPid() const;
 
   private:
     pid_t pid_;

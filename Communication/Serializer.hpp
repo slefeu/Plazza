@@ -12,6 +12,15 @@
 
 #include "Pizza.hpp"
 
+
+enum class RequestType {
+    Empty = 0,
+    Error = 1,
+    Success = 2,
+    Availability = 4,
+    Order = 8,
+    Status = 16
+};
 class PizzaSerializer
 {
   public:
@@ -29,6 +38,7 @@ class PizzaSerializer
     static std::bitset<8> serializeCommand(char name) noexcept;
     static pizza::Pizza deserializePizza(
         const std::array<std::bitset<64>, ARRAY_SIZE>& data) noexcept;
+    static RequestType getRequestType(std::bitset<64> type);
 
   protected:
   private:

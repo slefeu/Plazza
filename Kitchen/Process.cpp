@@ -58,4 +58,9 @@ void Process::kill() const
         ::exit(0);
     }
 }
+
+pid_t Process::getPid() const
+{
+    return isChild() ? ::getpid() : pid_;
+}
 }

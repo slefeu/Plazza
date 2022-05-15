@@ -108,3 +108,13 @@ pizza::Pizza PizzaSerializer::deserializePizza(
     pizza.setSize(size);
     return (pizza);
 }
+
+RequestType PizzaSerializer::getRequestType(std::bitset<64> type)
+{
+    for (int i = 0; i < 5; i++) {
+        if (type == std::bitset<64>(std::pow(2, i))) {
+            return (static_cast<RequestType>(std::pow(2, i)));
+        }
+    }
+    return (RequestType::Empty);
+}
