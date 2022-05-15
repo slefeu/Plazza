@@ -13,6 +13,7 @@
 
 #include "Factory.hpp"
 #include "Pizza.hpp"
+#include "Process.hpp"
 #include "Serializer.hpp"
 
 namespace plazza
@@ -52,9 +53,11 @@ class Reception
     void log();
     void list() noexcept;
     void status();
+    void createKitchen();
     // attributes
     std::string command_;
     std::vector<std::string> pizzaTypes_;
+    std::vector<Process> kitchens_;
     std::map<std::string, pizza::PizzaSize> pizzaSizes_;
     std::map<std::string, pizza::Ingredients> ingredients_;
     int cooks_ = 0;
