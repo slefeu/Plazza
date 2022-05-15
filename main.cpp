@@ -4,7 +4,6 @@
 ** File description:
 ** main
 */
-
 #include <iostream>
 
 #include "Errors.hpp"

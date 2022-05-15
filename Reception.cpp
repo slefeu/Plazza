@@ -106,6 +106,8 @@ void Reception::log()
 
 void Reception::status()
 {
+    // send à l'IPC
+    // std::bitset<8> display = PizzaSerializer::serializeCommand('s');
 }
 
 void Reception::list() noexcept
@@ -145,9 +147,9 @@ void Reception::addPizza()
             pizza::Pizza pizza(
                 pizza::PizzaType::Custom, multiplier * pizza_multiplier);
             for (auto& value : ingredients) {
-                pizza.addIngredients(value);
+                pizza.addIngredient(value);
             }
-            return pizza;
+            return (pizza);
         });
 }
 
@@ -229,7 +231,7 @@ void Reception::orderPizza(std::string& order)
 
     stream >> type >> size >> number;
     pizza::Pizza pizza = pizzaFactory_.getElement(type);
-    pizza.setPizzaSize(pizzaSizes_.find(size)->second);
+    pizza.setSize(pizzaSizes_.find(size)->second);
     std::cout << pizza;
 }
 

@@ -13,7 +13,6 @@
 namespace pizza
 {
 using CookingTime = double;
-static constexpr unsigned int TYPES = 4;
 enum class PizzaType {
     Regina = 1,
     Margarita = 2,
@@ -23,15 +22,15 @@ enum class PizzaType {
 };
 enum class PizzaSize { S = 1, M = 2, L = 4, XL = 8, XXL = 16 };
 enum class Ingredients {
-    Dough,
-    Tomato,
-    Gruyere,
-    Ham,
-    Mushrooms,
-    Steak,
-    Eggplant,
-    GoatCheese,
-    ChiefLove
+    Dough = 1,
+    Tomato = 2,
+    Gruyere = 4,
+    Ham = 8,
+    Mushrooms = 16,
+    Steak = 32,
+    Eggplant = 64,
+    GoatCheese = 128,
+    ChiefLove = 256
 };
 
 class Pizza
@@ -52,8 +51,8 @@ class Pizza
     PizzaSize getPizzaSize() const noexcept;
     void setCookingTime(CookingTime&) noexcept;
     void setPizzaType(PizzaType&) noexcept;
-    void setPizzaSize(PizzaSize) noexcept;
-    void addIngredients(Ingredients&) noexcept;
+    void setSize(PizzaSize) noexcept;
+    void addIngredient(Ingredients&) noexcept;
 
   protected:
     PizzaType type_;

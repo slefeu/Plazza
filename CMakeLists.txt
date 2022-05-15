@@ -27,9 +27,11 @@ ENDIF()
 
 add_subdirectory(Error)
 add_subdirectory(Kitchen)
+add_subdirectory(Communication)
 
 target_link_libraries(${PROJECT_NAME} Error)
 target_link_libraries(${PROJECT_NAME} Kitchen)
+target_link_libraries(${PROJECT_NAME} Communication)
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
 

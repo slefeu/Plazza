@@ -14,6 +14,7 @@
 #include "Factory.hpp"
 #include "Pizza.hpp"
 #include "Process.hpp"
+#include "Serializer.hpp"
 
 namespace plazza
 {
