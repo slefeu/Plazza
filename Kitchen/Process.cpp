@@ -9,23 +9,19 @@
 
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <unistd.h>
 
 #include <iostream>
 #include <memory>
 
-namespace plazza
-{
 Process::Process() noexcept
+    : pid_(::fork())
 {
-    pid_ = ::fork();
 }
 
 Process::~Process() noexcept
 {
-    if (isRunning()) {
+    if (isRunning())
         ::kill(pid_, SIGKILL);
-    }
 }
 
 void Process::wait() const noexcept
@@ -35,27 +31,25 @@ void Process::wait() const noexcept
     }
 }
 
-bool Process::isChild() const
+bool Process::isChild() const noexcept
 {
-    return pid_ == 0;
+    return (pid_ == 0);
 }
 
-bool Process::isRunning() const
+bool Process::isRunning() const noexcept
 {
     int status = 0;
     int ret = ::waitpid(pid_, &status, WNOHANG);
-    if (ret == -1) {
-        return false;
-    }
-    return ret == 0;
+
+    if (ret == -1)
+        return (false);
+    return (ret == 0);
 }
 
-void Process::kill() const
+void Process::kill() const noexcept
 {
-    if (!isChild()) {
+    if (!isChild())
         ::kill(pid_, SIGKILL);
-    } else {
+    else
         ::exit(0);
-    }
-}
 }
