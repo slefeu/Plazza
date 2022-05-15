@@ -13,6 +13,7 @@
 
 #include "Factory.hpp"
 #include "Pizza.hpp"
+#include "Serializer.hpp"
 
 namespace plazza
 {
@@ -23,12 +24,12 @@ class Reception
 {
   public:
     explicit Reception(char** av);
-    Reception(const Reception& other) noexcept = default;
-    Reception(Reception&& other) noexcept = default;
+    Reception(const Reception& other) noexcept = delete;
+    Reception(Reception&& other) noexcept = delete;
     ~Reception() noexcept = default;
 
-    Reception& operator=(const Reception& rhs) noexcept = default;
-    Reception& operator=(Reception&& rhs) noexcept = default;
+    Reception& operator=(const Reception& rhs) noexcept = delete;
+    Reception& operator=(Reception&& rhs) noexcept = delete;
 
     void executeShell();
     static std::string& trim(std::string&);

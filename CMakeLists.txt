@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(CMAKE_CXX_CLANG_TIDY "clang-tidy")
 
-set(CXXFLAGS "-pthread")
+set(CXXFLAGS "-lpthread")
 
 set(CMAKE_CXX_FLAGS_DEBUG_INIT "-g")
 
@@ -27,9 +27,11 @@ ENDIF()
 
 add_subdirectory(Error)
 add_subdirectory(Kitchen)
+add_subdirectory(Communication)
 
 target_link_libraries(${PROJECT_NAME} Error)
 target_link_libraries(${PROJECT_NAME} Kitchen)
+target_link_libraries(${PROJECT_NAME} Communication)
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
 
