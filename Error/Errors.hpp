@@ -56,3 +56,19 @@ class ExecutionError : public Error
   protected:
   private:
 };
+
+class CommunicationError : public Error
+{
+  public:
+    explicit CommunicationError(std::string) noexcept;
+    CommunicationError(const CommunicationError& other) noexcept = default;
+    CommunicationError(CommunicationError&& other) noexcept = default;
+    ~CommunicationError() noexcept override = default;
+
+    CommunicationError& operator=(
+        const CommunicationError& rhs) noexcept = default;
+    CommunicationError& operator=(CommunicationError&& rhs) noexcept = default;
+
+  protected:
+  private:
+};

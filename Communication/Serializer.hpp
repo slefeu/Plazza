@@ -12,7 +12,6 @@
 
 #include "Pizza.hpp"
 
-
 enum class RequestType {
     Empty = 0,
     Error = 1,
