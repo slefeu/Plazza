@@ -11,6 +11,7 @@
 
 #include "Clock.hpp"
 #include "Fridge.hpp"
+#include "NamedPipe.hpp"
 #include "Threads.hpp"
 
 namespace plazza
@@ -20,7 +21,8 @@ class Kitchen
   public:
     explicit Kitchen(double multiplier,
         unsigned int nb_cooks,
-        unsigned int restock_time) noexcept;
+        unsigned int restock_time,
+        NamedPipe& pipe) noexcept;
     Kitchen(const Kitchen& other) noexcept = delete;
     Kitchen(Kitchen&& other) noexcept = delete;
     ~Kitchen() noexcept = default;
@@ -41,8 +43,10 @@ class Kitchen
     std::mutex mutex_;
     std::queue<pizza::Pizza> waiting_ = {};
     std::queue<pizza::Pizza> cooked_ = {};
+    NamedPipe& pipe_;
 
     // methods
+    void checkRequest() noexcept;
     void shutdown() noexcept;
     void task(pizza::Pizza pizza) noexcept;
     std::optional<threads::Task> createTask() noexcept;

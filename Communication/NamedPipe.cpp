@@ -12,6 +12,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include <iostream>
 #include <array>
 #include <cstring>
 
@@ -20,7 +21,9 @@
 NamedPipe::NamedPipe(std::string name)
     : path_("/tmp/" + name)
 {
-    ::mkfifo(path_.c_str(), 0666);
+    std::cout << "Before :" << path_ << std::endl;
+    ::mkfifo(path_.c_str(), 0777);
+    std::cout << "After :" << path_ << std::endl;
 }
 
 std::bitset<64> NamedPipe::read(bool wait)
@@ -31,13 +34,13 @@ std::bitset<64> NamedPipe::read(bool wait)
     }
     int fd = ::open(path_.c_str(), options);
     if (fd == -1) {
+        std::cout << "open() failed: " << std::strerror(errno) << '\n';
         throw CommunicationError("open() failed");
     }
     std::array<char, 8> buffer{};
     if (::read(fd, buffer.data(), 8) == -1) {
         return (std::bitset<64>(0));
     }
-    ::close(fd);
     std::string str(buffer.begin(), buffer.end());
     return charToBitset(str);
 }
@@ -46,13 +49,13 @@ void NamedPipe::write(std::bitset<64> bitset)
 {
     int fd = ::open(path_.c_str(), O_WRONLY | O_CLOEXEC);
     if (fd == -1) {
+        std::cout << "open() failed: " << std::strerror(errno) << '\n';
         throw CommunicationError("open() failed");
     }
     std::string buffer = bitsetToChar(bitset);
     if (::write(fd, buffer.c_str(), 8) == -1) {
         throw CommunicationError("write() failed");
     }
-    ::close(fd);
 }
 
 std::string NamedPipe::bitsetToChar(std::bitset<64> bitset)
@@ -78,5 +81,6 @@ std::bitset<64> NamedPipe::charToBitset(std::string buffer)
 
 void NamedPipe::close()
 {
+    std::cout << "Unlinking : " << path_ << std::endl;
     ::unlink(path_.c_str());
 }

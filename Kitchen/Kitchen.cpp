@@ -12,16 +12,20 @@
 #include "DefaultPizzas.hpp"
 #include "Errors.hpp"
 #include "Factory.hpp"
+#include "Serializer.hpp"
+#include <unistd.h>
 
 namespace plazza
 {
 Kitchen::Kitchen(double multiplier,
     unsigned int nb_cooks,
-    unsigned int restock_time) noexcept
+    unsigned int restock_time,
+    NamedPipe& pipe) noexcept
     : cooks_(nb_cooks)
     , max_pizza_(nb_cooks * 2)
     , multiplier_(multiplier)
     , fridge_(Fridge(restock_time / 1000))
+    , pipe_(pipe)
 {
 }
 
@@ -59,6 +63,15 @@ void Kitchen::tryMakePizzas() noexcept
     cooks_.waitForExecution();
 }
 
+void Kitchen::checkRequest() noexcept
+{
+    std::bitset<64> request = pipe_.read(false);
+
+    if (PizzaSerializer::getRequestType(request) != RequestType::Empty) {
+        std::cout << "Request received" << std::endl;
+    }
+}
+
 void Kitchen::run() noexcept
 {
     // quand on va recevoir une pizza, voilà le format pour essayer de la mettre
@@ -74,6 +87,7 @@ void Kitchen::run() noexcept
     // manque la méthode pour enlever les pizzas de la kitchen du coup (pour pop
     // de cooked)
     while (running_) {
+        checkRequest();
         if (!clock_.getIdle()) {
             if (clock_.isNSeconds(fridge_.getRestockTime()))
                 fridge_.restock();
@@ -90,6 +104,7 @@ void Kitchen::run() noexcept
                 shutdown();
             }
         }
+        sleep(1);
     }
 }
 

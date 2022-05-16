@@ -38,6 +38,7 @@ class PizzaSerializer
     static pizza::Pizza deserializePizza(
         const std::array<std::bitset<64>, ARRAY_SIZE>& data) noexcept;
     static RequestType getRequestType(std::bitset<64> type);
+    static std::bitset<64> createRequestType(RequestType type);
 
   protected:
   private:

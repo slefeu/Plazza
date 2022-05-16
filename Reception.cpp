@@ -233,6 +233,7 @@ void Reception::orderPizza(std::string& order)
     pizza::Pizza pizza = pizzaFactory_.getElement(type);
     pizza.setSize(pizzaSizes_.find(size)->second);
     std::cout << pizza;
+    getKitchen();
 }
 
 void Reception::checkOrderSyntax()
@@ -287,16 +288,30 @@ void Reception::executeShell()
     }
 }
 
-void Reception::createKitchen()
+KitckenProcess Reception::createKitchen() const
 {
-    Process process;
+    std::unique_ptr<Process> process = std::make_unique<Process>();
+    std::unique_ptr<NamedPipe> pipe = std::make_unique<NamedPipe>(std::to_string(process->getPid()));
+    KitckenProcess kitchenProcess = {process, pipe};
 
-    if (process.isChild()) {
-        Kitchen kitchen(multiplier_, cooks_, time_);
+    if (process->isChild()) {
+        Kitchen kitchen(multiplier_, cooks_, time_, pipe);
         kitchen.run();
         process.kill();
-    } else {
-        kitchens_.push_back(process);
+    }
+    return (kitchenProcess);
+}
+
+KitckenProcess Reception::getKitchen()
+{
+    if (kitchens_.empty()) {
+        KitckenProcess kitchenProcess = createKitchen();
+        kitchens_.push_back(kitchenProcess);
+        return (kitchenProcess);
+    }
+    for (KitckenProcess &kitchen : kitchens_) {
+        kitchen.pipe.write(PizzaSerializer::createRequestType(RequestType::Availability));
+        return (kitchen);
     }
 }
 

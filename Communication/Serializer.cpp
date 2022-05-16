@@ -118,3 +118,8 @@ RequestType PizzaSerializer::getRequestType(std::bitset<64> type)
     }
     return (RequestType::Empty);
 }
+
+std::bitset<64> PizzaSerializer::createRequestType(RequestType type)
+{
+    return (std::bitset<64>(static_cast<int>(type)));
+}
