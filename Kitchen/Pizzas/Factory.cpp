@@ -7,10 +7,6 @@
 
 #include "Factory.hpp"
 
-#include <functional>
-#include <iostream>
-#include <map>
-
 #include "Errors.hpp"
 
 template <typename ElementType>

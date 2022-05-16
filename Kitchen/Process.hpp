@@ -1,32 +1,31 @@
 /*
 ** EPITECH PROJECT, 2022
 ** Plazza
-** File description: hpp file
-** Process
+** File description:
+** Process hpp file
 */
 
 #pragma once
 
 #include <unistd.h>
 
-namespace plazza
-{
 class Process
 {
   public:
     Process() noexcept;
-    Process(Process const& other) noexcept = default;
+    Process(const Process& other) noexcept = default;
     Process(Process&& other) noexcept = default;
-    Process& operator=(Process const& other) noexcept = default;
-    Process& operator=(Process&& other) noexcept = default;
     ~Process() noexcept;
+
+    Process& operator=(const Process& rhs) noexcept = default;
+    Process& operator=(Process&& rhs) noexcept = default;
+
     void wait() const noexcept;
-    bool isChild() const;
-    bool isRunning() const;
-    void kill() const;
+    bool isChild() const noexcept;
+    bool isRunning() const noexcept;
+    void kill() const noexcept;
     pid_t getPid() const;
 
   private:
     pid_t pid_;
 };
-}
