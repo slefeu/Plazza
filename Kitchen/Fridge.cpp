@@ -19,9 +19,9 @@ Fridge::Fridge(unsigned int time) noexcept
 
 void Fridge::restock() noexcept
 {
-    for (std::size_t index : stocks_) {
-        if (stocks_[index] < MAX_STOCK) {
-            stocks_[index]++;
+    for (std::size_t& stock : stocks_) {
+        if (stock < MAX_STOCK) {
+            stock++;
         }
     }
 }
