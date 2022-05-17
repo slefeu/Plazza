@@ -33,6 +33,7 @@ class Kitchen
 
   protected:
   private:
+    unsigned int nbCooks;
     threads::ThreadPool cooks_;
     unsigned int max_pizza_;
     double multiplier_;
@@ -55,5 +56,7 @@ class Kitchen
     void getStatus() const noexcept;
     void tryMakePizzas() noexcept;
     void addWaitPizza(pizza::Pizza pizza);
+    void displayAvailableCooks() const noexcept;
+    void displayBusyCooks() const noexcept;
 };
 } // namespace plazza

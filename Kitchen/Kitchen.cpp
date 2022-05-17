@@ -27,6 +27,7 @@ Kitchen::Kitchen(double multiplier,
     unsigned int restock_time,
     std::unique_ptr<NamedPipe> pipe) noexcept
     : cooks_(nb_cooks)
+    , nbCooks(nb_cooks)
     , max_pizza_(nb_cooks * 2)
     , multiplier_(multiplier)
     , fridge_(Fridge(restock_time / 1000))
@@ -95,6 +96,23 @@ pizza::Pizza Kitchen::getOrder() const noexcept
     return (PizzaSerializer::deserializePizza(packed));
 }
 
+void Kitchen::displayBusyCooks() const noexcept
+{
+    int count = 1;
+    auto list = waiting_;
+    std::cout << "\nBusy cooks :" << std::endl;
+    for (std::size_t it = 0; it < list.size(); ++it) {
+        std::cout << "Cook " << count << " cooking: " << it << std::endl;
+        count++;
+    }
+}
+
+void Kitchen::displayAvailableCooks() const noexcept
+{
+    std::cout << "\nAvailable cooks :\n"
+              << nbCooks - cooks_.getBusyThreads() << std::endl;
+}
+
 void Kitchen::getStatus() const noexcept
 {
     std::bitset<64> success =
@@ -103,6 +121,8 @@ void Kitchen::getStatus() const noexcept
     std::cout << "Status : yes" << std::endl;
     fridge_.display();
     // TODO(slefeu) : Print les trucs de la kitchen
+    displayAvailableCooks();
+    displayBusyCooks();
     pipe_->write(IPCDirection::IN, success);
 }
 
@@ -148,16 +168,13 @@ void Kitchen::run() noexcept
             }
             {
                 std::unique_lock<std::mutex> lock(mutex_);
-                if (waiting_.empty()
-                    && cooked_.empty()) // va loop à l'infinie car je pop pas
-                                        // dans cooked pour l'instant
+                if (waiting_.empty() && cooked_.empty())
                     clock_.setIdle(true);
             }
             tryMakePizzas();
         } else {
-            if (clock_.isIdle()) {
+            if (clock_.isIdle())
                 shutdown();
-            }
         }
     }
 }
