@@ -54,7 +54,6 @@ class Reception
     void setUserInput() noexcept;
     void addPizza();
     void exit() noexcept;
-    void log();
     void list() noexcept;
     void status();
     void cleanKitchens() noexcept;

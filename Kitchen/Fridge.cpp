@@ -26,36 +26,34 @@ void Fridge::restock() noexcept
     }
 }
 
-void Fridge::takeIngredients(
-    const std::vector<pizza::Ingredients>& list) noexcept
-{
-    for (auto it = std::begin(list); it != std::end(list); ++it) {
-        remove(*it);
-    }
-}
-
 unsigned int Fridge::getRestockTime() const noexcept
 {
     return (restock_time_);
 }
 
-void Fridge::remove(const pizza::Ingredients ingredient) noexcept
+void Fridge::takeIngredients(
+    const std::vector<pizza::Ingredients>& list) noexcept
 {
-    // TODO(slefeu) : Handle new enum class
-    stocks_[static_cast<unsigned int>(ingredient)]--;
+    for (auto it = std::begin(list); it != std::end(list); ++it) {
+        remove(std::log2(static_cast<double>(*it)));
+    }
 }
 
-bool Fridge::contains(const pizza::Ingredients ingredient) const noexcept
+void Fridge::remove(const double ingredient) noexcept
 {
-    // TODO(slefeu) : Handle new enum classju
-    return (stocks_[static_cast<unsigned int>(ingredient)] != 0);
+    stocks_[static_cast<size_t>(ingredient)]--;
+}
+
+bool Fridge::contains(const double ingredient) const noexcept
+{
+    return (stocks_[static_cast<size_t>(ingredient)] != 0);
 }
 
 void Fridge::display() const noexcept
 {
     unsigned int index = 0;
 
-    std::cout << "\nKitchen stock:" << std::endl;
+    std::cout << "\nKitchen stocks:" << std::endl;
     for (auto i : stocks_) {
         std::cout << static_cast<pizza::Ingredients>(std::pow(2, index)) << ": "
                   << std::to_string(i) << std::endl;
@@ -66,8 +64,8 @@ void Fridge::display() const noexcept
 bool Fridge::hasEnough(
     const std::vector<pizza::Ingredients>& list) const noexcept
 {
-    for (auto i : list) {
-        if (!contains(i))
+    for (auto it : list) {
+        if (!contains(std::log2(static_cast<double>(it))))
             return (false);
     }
     return (true);

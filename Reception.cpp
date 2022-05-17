@@ -106,10 +106,6 @@ void Reception::exit() noexcept
     isEnd_ = true;
 }
 
-void Reception::log()
-{
-}
-
 void Reception::status()
 {
     if (kitchens_.empty())
@@ -228,7 +224,7 @@ bool Reception::checkOrder(std::string& order)
         if (!checkPizzaNumber(number))
             throw(ExecutionError("Invalid pizza number : " + number));
     } catch (const ExecutionError& ex) {
-        std::cerr << "Error : " << ex.what() << std::endl;
+        std::cerr << ex.what() << std::endl;
         return (false);
     }
     return (true);
@@ -275,7 +271,6 @@ void Reception::executeCommand()
 {
     static std::map<std::string, void (Reception::*)()> creator = {
         {"exit", &Reception::exit},
-        {"log", &Reception::log},
         {"list", &Reception::list},
         {"status", &Reception::status},
         {"addPizza", &Reception::addPizza},

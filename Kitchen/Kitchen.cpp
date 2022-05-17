@@ -142,8 +142,10 @@ void Kitchen::run() noexcept
     while (running_) {
         checkRequest();
         if (!clock_.getIdle()) {
-            if (clock_.isNSeconds(fridge_.getRestockTime()))
+            if (clock_.isNSeconds(fridge_.getRestockTime())) {
                 fridge_.restock();
+                clock_.resetStocks();
+            }
             {
                 std::unique_lock<std::mutex> lock(mutex_);
                 if (waiting_.empty()

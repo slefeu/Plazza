@@ -25,7 +25,7 @@ class Clock
     bool isIdle() const noexcept;
     bool getIdle() const noexcept;
     void reset() noexcept;
-
+    void resetStocks() noexcept;
     template <typename T>
     static auto getSeconds(T seconds) noexcept
     {
@@ -37,5 +37,7 @@ class Clock
     bool idle_{false};
     static constexpr unsigned int MAX_TIME = 5;
     std::chrono::high_resolution_clock::time_point start_{
+        {std::chrono::high_resolution_clock::now()}};
+    std::chrono::high_resolution_clock::time_point restock_{
         {std::chrono::high_resolution_clock::now()}};
 };
