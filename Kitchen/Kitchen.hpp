@@ -33,9 +33,8 @@ class Kitchen
 
   protected:
   private:
-    unsigned int nbCooks;
+    unsigned long nbCooks;
     threads::ThreadPool cooks_;
-    unsigned int max_pizza_;
     double multiplier_;
     bool full_{false};
     bool running_{true};
@@ -43,20 +42,26 @@ class Kitchen
     Fridge fridge_;
     std::mutex mutex_;
     std::queue<pizza::Pizza> waiting_ = {};
+    std::queue<pizza::Pizza> cooking_ = {};
     std::queue<pizza::Pizza> cooked_ = {};
     std::unique_ptr<NamedPipe> pipe_;
 
     // methods
     void checkRequest() noexcept;
     void shutdown() noexcept;
-    void task(pizza::Pizza pizza) noexcept;
+    void task(pizza::Pizza) noexcept;
     std::optional<threads::Task> createTask() noexcept;
     void sendAvailability() const noexcept;
     pizza::Pizza getOrder() const noexcept;
     void getStatus() const noexcept;
     void tryMakePizzas() noexcept;
-    void addWaitPizza(pizza::Pizza pizza);
+    void addWaitPizza(pizza::Pizza);
     void displayAvailableCooks() const noexcept;
     void displayBusyCooks() const noexcept;
+    void remove(pizza::Pizza) noexcept;
+    void displayWaitingPizzas() const noexcept;
 };
+
+bool operator!=(const pizza::Pizza& first, const pizza::Pizza& second) noexcept;
+
 } // namespace plazza

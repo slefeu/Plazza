@@ -64,8 +64,8 @@ void Fridge::display() const noexcept
 bool Fridge::hasEnough(
     const std::vector<pizza::Ingredients>& list) const noexcept
 {
-    for (auto it : list) {
-        if (!contains(std::log2(static_cast<double>(it))))
+    for (auto it = std::begin(list); it != std::end(list); ++it) {
+        if (!contains(std::log2(static_cast<double>(*it))))
             return (false);
     }
     return (true);

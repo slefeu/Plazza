@@ -28,7 +28,6 @@ Kitchen::Kitchen(double multiplier,
     std::unique_ptr<NamedPipe> pipe) noexcept
     : cooks_(nb_cooks)
     , nbCooks(nb_cooks)
-    , max_pizza_(nb_cooks * 2)
     , multiplier_(multiplier)
     , fridge_(Fridge(restock_time / 1000))
     , pipe_(std::move(pipe))
@@ -55,6 +54,7 @@ std::optional<threads::Task> Kitchen::createTask() noexcept
         return (std::nullopt);
     fridge_.takeIngredients(list);
     waiting_.pop();
+    cooking_.emplace(pizza);
     return ([this, pizza] { return plazza::Kitchen::task(pizza); });
 }
 
@@ -70,8 +70,7 @@ void Kitchen::tryMakePizzas() noexcept
 
 void Kitchen::sendAvailability() const noexcept
 {
-    // TODO(slefeu): Ajouter une condition de vérification de disponiblité
-    if (true) {
+    if (waiting_.size() + cooking_.size() < nbCooks * 2) {
         pipe_->write(IPCDirection::IN,
             PizzaSerializer::createRequestType(RequestType::Success));
     } else {
@@ -96,31 +95,49 @@ pizza::Pizza Kitchen::getOrder() const noexcept
     return (PizzaSerializer::deserializePizza(packed));
 }
 
+void Kitchen::displayWaitingPizzas() const noexcept
+{
+    auto list = waiting_;
+
+    if (waiting_.empty()) {
+        std::cout << "\nNo pizza waiting to be cooked" << std::endl;
+    } else {
+        std::cout << "\nPizzas waiting to be cooked :" << std::endl;
+        for (std::size_t it = 0; it < list.size(); ++it) {
+            std::cout << list.front() << std::endl;
+            list.pop();
+        }
+    }
+}
+
 void Kitchen::displayBusyCooks() const noexcept
 {
     int count = 1;
-    auto list = waiting_;
+    auto list = cooking_;
+
     std::cout << "\nBusy cooks :" << std::endl;
     for (std::size_t it = 0; it < list.size(); ++it) {
-        std::cout << "Cook " << count << " cooking: " << it << std::endl;
+        std::cout << "Cook " << count << " cooking: " << list.front()
+                  << std::endl;
+        list.pop();
         count++;
     }
 }
 
 void Kitchen::displayAvailableCooks() const noexcept
 {
-    std::cout << "\nAvailable cooks :\n"
-              << nbCooks - cooks_.getBusyThreads() << std::endl;
+    std::cout << "\nAmount of available cooks :\n"
+              << nbCooks - cooks_.getBusyThreads() << "/" << nbCooks
+              << std::endl;
 }
 
 void Kitchen::getStatus() const noexcept
 {
     std::bitset<64> success =
         PizzaSerializer::createRequestType(RequestType::Success);
-
     std::cout << "Status : yes" << std::endl;
     fridge_.display();
-    // TODO(slefeu) : Print les trucs de la kitchen
+    displayWaitingPizzas();
     displayAvailableCooks();
     displayBusyCooks();
     pipe_->write(IPCDirection::IN, success);
@@ -147,18 +164,6 @@ void Kitchen::checkRequest() noexcept
 
 void Kitchen::run() noexcept
 {
-    // quand on va recevoir une pizza, voilà le format pour essayer de la mettre
-    // dans la waiting list
-    //  try {
-    //      addWaitPizza(pizza::Americana, pizza::PizzaSize::M, 1);
-    //  } catch (const ExecutionError& error) {
-    //      std ::cout << error.what() << std ::endl;
-    //  }
-    //  il va falloir checker la quantité de pizzas dans waiting + cooked pour
-    //  voir si ça dépasse pas max_pizza !!
-    //à faire soit dans addPizza, soit dans l'IPC ?
-    // manque la méthode pour enlever les pizzas de la kitchen du coup (pour pop
-    // de cooked)
     while (running_) {
         checkRequest();
         if (!clock_.getIdle()) {
@@ -183,7 +188,53 @@ void Kitchen::task(pizza::Pizza pizza) noexcept
 {
     std::this_thread::sleep_for(Clock::getSeconds(pizza.getCookingTime()));
     std::unique_lock<std::mutex> lock(mutex_);
+    remove(pizza);
     cooked_.emplace(pizza);
+}
+
+void Kitchen::remove(pizza::Pizza pizza) noexcept
+{
+    std::queue<pizza::Pizza> reference_queue = {};
+    unsigned long size = cooking_.size();
+    unsigned int count = 0;
+
+    while (cooking_.front() != pizza && !cooking_.empty()) {
+        reference_queue.push(cooking_.front());
+        cooking_.pop();
+        count++;
+    }
+    if (cooking_.empty()) {
+        while (!reference_queue.empty()) {
+            cooking_.push(reference_queue.front());
+            reference_queue.pop();
+        }
+    } else {
+        cooking_.pop();
+        while (!reference_queue.empty()) {
+            cooking_.push(reference_queue.front());
+            reference_queue.pop();
+        }
+        auto index = size - count - 1;
+        while (index != 0) {
+            auto elem = cooking_.front();
+            cooking_.pop();
+            cooking_.push(elem);
+            --index;
+        }
+    }
+}
+
+bool operator!=(const pizza::Pizza& first, const pizza::Pizza& second) noexcept
+{
+    if (first.getPizzaType() != second.getPizzaType())
+        return (true);
+    if (first.getPizzaSize() != second.getPizzaSize())
+        return (true);
+    if (first.getCookingTime() != second.getCookingTime())
+        return (true);
+    if (first.getIngredients() != second.getIngredients())
+        return (true);
+    return (false);
 }
 
 } // namespace plazza
