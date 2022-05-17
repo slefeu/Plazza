@@ -54,6 +54,7 @@ class Kitchen
     void sendAvailability() const noexcept;
     pizza::Pizza getOrder() const noexcept;
     void getStatus() const noexcept;
+    void restock() noexcept;
     void tryMakePizzas() noexcept;
     void addWaitPizza(pizza::Pizza);
     void displayAvailableCooks() const noexcept;

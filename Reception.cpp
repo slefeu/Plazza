@@ -24,6 +24,7 @@
 #include "NamedPipe.hpp"
 #include "Pizza.hpp"
 #include "Process.hpp"
+#include "Serializer.hpp"
 
 namespace plazza
 {
@@ -108,6 +109,7 @@ void Reception::exit() noexcept
 
 void Reception::status()
 {
+    cleanKitchens();
     if (kitchens_.empty())
         std::cout << "No kitchen running" << std::endl;
     for (KitchenProcess& kitchen : kitchens_) {
@@ -151,14 +153,15 @@ void Reception::addPizza()
         ingredients.emplace_back(ingredients_.find(ingredient)->second);
     }
     pizzaFactory_.addElement(
-        name, [&multiplier, &pizza_multiplier, &ingredients]() {
+        name, [multiplier, pizza_multiplier, ingredients]() {
             pizza::Pizza pizza(
                 pizza::PizzaType::Custom, multiplier * pizza_multiplier);
-            for (auto& value : ingredients) {
+            for (auto value : ingredients) {
                 pizza.addIngredient(value);
             }
             return (pizza);
         });
+    pizzaTypes_.push_back(name);
 }
 
 std::string& Reception::trim(std::string& string)
@@ -246,7 +249,6 @@ void Reception::sendPizza(KitchenProcess& kitchen, pizza::Pizza pizza)
 
 void Reception::orderPizza(std::string& order)
 {
-    KitchenProcess& kitchen = getKitchen();
     std::stringstream stream(trim(order));
     std::string type;
     std::string size;
@@ -255,7 +257,11 @@ void Reception::orderPizza(std::string& order)
     stream >> type >> size >> number;
     pizza::Pizza pizza = pizzaFactory_.getElement(type);
     pizza.setSize(pizzaSizes_.find(size)->second);
-    sendPizza(kitchen, pizza);
+    number.erase(0, 1);
+    for (int i = 0; i < std::stoi(number); i++) {
+        KitchenProcess& kitchen = getKitchen();
+        sendPizza(kitchen, pizza);
+    }
 }
 
 void Reception::checkOrderSyntax()
@@ -334,13 +340,15 @@ void Reception::cleanKitchens() noexcept
 
 KitchenProcess& Reception::getKitchen()
 {
+    RequestType answer = RequestType::Empty;
     cleanKitchens();
+
     for (KitchenProcess& kitchen : kitchens_) {
         kitchen.getPipe().write(IPCDirection::OUT,
             PizzaSerializer::createRequestType(RequestType::Availability));
-        if (PizzaSerializer::getRequestType(
-                kitchen.getPipe().read(IPCDirection::IN, true))
-            == RequestType::Success) {
+        answer = PizzaSerializer::getRequestType(
+            kitchen.getPipe().read(IPCDirection::IN, true));
+        if (answer == RequestType::Success) {
             return (kitchen);
         }
     }

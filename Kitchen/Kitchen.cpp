@@ -50,7 +50,7 @@ std::optional<threads::Task> Kitchen::createTask() noexcept
     pizza::Pizza pizza = waiting_.front();
     auto list = pizza.getIngredients();
 
-    if (!fridge_.hasEnough(list))
+    if (!fridge_.hasEnough(list) || cooks_.getBusyThreads() == nbCooks)
         return (std::nullopt);
     fridge_.takeIngredients(list);
     waiting_.pop();
@@ -60,12 +60,13 @@ std::optional<threads::Task> Kitchen::createTask() noexcept
 
 void Kitchen::tryMakePizzas() noexcept
 {
-    while (!waiting_.empty()) {
+    if (!waiting_.empty()) {
         auto task = createTask();
         if (task.has_value())
             cooks_.addTask(task.value());
+        restock();
+        clock_.setIdle(false);
     }
-    cooks_.waitForExecution();
 }
 
 void Kitchen::sendAvailability() const noexcept
@@ -117,8 +118,8 @@ void Kitchen::displayBusyCooks() const noexcept
 
     std::cout << "\nBusy cooks :" << std::endl;
     for (std::size_t it = 0; it < list.size(); ++it) {
-        std::cout << "Cook " << count << " cooking: " << list.front()
-                  << std::endl;
+        std::cout << "Cook " << count
+                  << " cooking: " << list.front().getPizzaType() << std::endl;
         list.pop();
         count++;
     }
@@ -135,7 +136,8 @@ void Kitchen::getStatus() const noexcept
 {
     std::bitset<64> success =
         PizzaSerializer::createRequestType(RequestType::Success);
-    std::cout << "Status : yes" << std::endl;
+
+    std::cout << "Kitchen " << ::getpid() << " status :" << std::endl;
     fridge_.display();
     displayWaitingPizzas();
     displayAvailableCooks();
@@ -154,6 +156,7 @@ void Kitchen::checkRequest() noexcept
             sendAvailability();
         }
         if (requestType == RequestType::Order) {
+            clock_.setIdle(false);
             addWaitPizza(getOrder());
         }
         if (requestType == RequestType::Status) {
@@ -162,24 +165,31 @@ void Kitchen::checkRequest() noexcept
     }
 }
 
+void Kitchen::restock() noexcept
+{
+    if (clock_.isNSeconds(fridge_.getRestockTime())) {
+        fridge_.restock();
+        clock_.resetStocks();
+    }
+}
+
 void Kitchen::run() noexcept
 {
     while (running_) {
         checkRequest();
         if (!clock_.getIdle()) {
-            if (clock_.isNSeconds(fridge_.getRestockTime())) {
-                fridge_.restock();
-                clock_.resetStocks();
-            }
+            restock();
+            tryMakePizzas();
             {
                 std::unique_lock<std::mutex> lock(mutex_);
-                if (waiting_.empty() && cooked_.empty())
+                if (waiting_.empty() && cooked_.empty() && cooking_.empty()) {
                     clock_.setIdle(true);
+                }
             }
-            tryMakePizzas();
         } else {
-            if (clock_.isIdle())
+            if (clock_.isIdle()) {
                 shutdown();
+            }
         }
     }
 }
