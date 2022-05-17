@@ -44,7 +44,7 @@ class Reception
     // methods
     static double parseArgument(const std::string& str);
     static bool checkPizzaNumber(std::string);
-    static void sendPizza(KitchenProcess &, pizza::Pizza);
+    static void sendPizza(KitchenProcess&, pizza::Pizza);
     void initPizzas();
     bool checkPizzaType(std::string&);
     bool checkPizzaSize(std::string&);
