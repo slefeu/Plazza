@@ -230,6 +230,20 @@ bool Reception::checkOrder(std::string& order)
     return (true);
 }
 
+void Reception::sendPizza(KitchenProcess& kitchen, pizza::Pizza pizza)
+{
+    std::array<std::bitset<64>, PizzaSerializer::ARRAY_SIZE> pizza_serialized =
+        PizzaSerializer::serializePizza(pizza);
+
+    kitchen.getPipe().write(IPCDirection::OUT,
+        PizzaSerializer::createRequestType(RequestType::Order));
+    kitchen.getPipe().read(IPCDirection::IN, true);
+    for (const std::bitset<64>& bitset : pizza_serialized) {
+        kitchen.getPipe().write(IPCDirection::OUT, bitset);
+        kitchen.getPipe().read(IPCDirection::IN, true);
+    }
+}
+
 void Reception::orderPizza(std::string& order)
 {
     KitchenProcess& kitchen = getKitchen();
@@ -241,15 +255,7 @@ void Reception::orderPizza(std::string& order)
     stream >> type >> size >> number;
     pizza::Pizza pizza = pizzaFactory_.getElement(type);
     pizza.setSize(pizzaSizes_.find(size)->second);
-    kitchen.getPipe().write(IPCDirection::OUT,
-        PizzaSerializer::createRequestType(RequestType::Order));
-    kitchen.getPipe().read(IPCDirection::IN, true);
-    std::array<std::bitset<64>, PizzaSerializer::ARRAY_SIZE> pizza_serialized =
-        PizzaSerializer::serializePizza(pizza);
-    for (const std::bitset<64>& bitset : pizza_serialized) {
-        kitchen.getPipe().write(IPCDirection::OUT, bitset);
-        kitchen.getPipe().read(IPCDirection::IN, true);
-    }
+    sendPizza(kitchen, pizza);
 }
 
 void Reception::checkOrderSyntax()
