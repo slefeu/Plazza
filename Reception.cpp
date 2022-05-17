@@ -7,16 +7,21 @@
 
 #include "Reception.hpp"
 
+#include <bitset>
 #include <csignal>
 #include <functional>
 #include <iostream>
 #include <map>
+#include <memory>
+#include <ostream>
 #include <sstream>
 
 #include "DefaultPizzas.hpp"
 #include "Errors.hpp"
 #include "Factory.hpp"
 #include "Kitchen.hpp"
+#include "KitchenProcess.hpp"
+#include "NamedPipe.hpp"
 #include "Pizza.hpp"
 #include "Process.hpp"
 
@@ -24,7 +29,7 @@ namespace plazza
 {
 static bool isDigits(const std::string& str)
 {
-    return (str.find_first_not_of("0123456789") == std::string::npos);
+    return (str.find_first_not_of("0123456789.") == std::string::npos);
 }
 
 double Reception::parseArgument(const std::string& str)
@@ -39,7 +44,8 @@ double Reception::parseArgument(const std::string& str)
 
 void Reception::initPizzas()
 {
-    double multiplier = multiplier_;
+    double& multiplier = multiplier_;
+
     pizzaFactory_.addElement("margarita", [&multiplier]() {
         pizza::PizzaMargarita margarita(multiplier);
         return margarita;
@@ -106,8 +112,14 @@ void Reception::log()
 
 void Reception::status()
 {
-    // send à l'IPC
-    // std::bitset<8> display = PizzaSerializer::serializeCommand('s');
+    if (kitchens_.empty())
+        std::cout << "No kitchen running" << std::endl;
+    for (KitchenProcess& kitchen : kitchens_) {
+        kitchen.getPipe().write(IPCDirection::OUT,
+            PizzaSerializer::createRequestType(RequestType::Status));
+        PizzaSerializer::getRequestType(
+            kitchen.getPipe().read(IPCDirection::IN, true));
+    }
 }
 
 void Reception::list() noexcept
@@ -224,6 +236,7 @@ bool Reception::checkOrder(std::string& order)
 
 void Reception::orderPizza(std::string& order)
 {
+    KitchenProcess& kitchen = getKitchen();
     std::stringstream stream(trim(order));
     std::string type;
     std::string size;
@@ -232,8 +245,15 @@ void Reception::orderPizza(std::string& order)
     stream >> type >> size >> number;
     pizza::Pizza pizza = pizzaFactory_.getElement(type);
     pizza.setSize(pizzaSizes_.find(size)->second);
-    std::cout << pizza;
-    getKitchen();
+    kitchen.getPipe().write(IPCDirection::OUT,
+        PizzaSerializer::createRequestType(RequestType::Order));
+    kitchen.getPipe().read(IPCDirection::IN, true);
+    std::array<std::bitset<64>, PizzaSerializer::ARRAY_SIZE> pizza_serialized =
+        PizzaSerializer::serializePizza(pizza);
+    for (const std::bitset<64>& bitset : pizza_serialized) {
+        kitchen.getPipe().write(IPCDirection::OUT, bitset);
+        kitchen.getPipe().read(IPCDirection::IN, true);
+    }
 }
 
 void Reception::checkOrderSyntax()
@@ -288,31 +308,42 @@ void Reception::executeShell()
     }
 }
 
-KitckenProcess Reception::createKitchen() const
+KitchenProcess& Reception::createKitchen()
 {
     std::unique_ptr<Process> process = std::make_unique<Process>();
-    std::unique_ptr<NamedPipe> pipe = std::make_unique<NamedPipe>(std::to_string(process->getPid()));
-    KitckenProcess kitchenProcess = {process, pipe};
+    std::unique_ptr<NamedPipe> pipe =
+        std::make_unique<NamedPipe>(std::to_string(process->getPid()));
 
     if (process->isChild()) {
-        Kitchen kitchen(multiplier_, cooks_, time_, pipe);
+        Kitchen kitchen(multiplier_, cooks_, time_, std::move(pipe));
         kitchen.run();
-        process.kill();
+        process->kill();
     }
-    return (kitchenProcess);
+    kitchens_.emplace_back(std::move(process), std::move(pipe));
+    return (kitchens_.back());
 }
 
-KitckenProcess Reception::getKitchen()
+void Reception::cleanKitchens() noexcept
 {
-    if (kitchens_.empty()) {
-        KitckenProcess kitchenProcess = createKitchen();
-        kitchens_.push_back(kitchenProcess);
-        return (kitchenProcess);
+    auto new_end = std::remove_if(kitchens_.begin(),
+        kitchens_.end(),
+        [](KitchenProcess& val) { return !val.getProcess().isRunning(); });
+    kitchens_.erase(new_end, kitchens_.end());
+}
+
+KitchenProcess& Reception::getKitchen()
+{
+    cleanKitchens();
+    for (KitchenProcess& kitchen : kitchens_) {
+        kitchen.getPipe().write(IPCDirection::OUT,
+            PizzaSerializer::createRequestType(RequestType::Availability));
+        if (PizzaSerializer::getRequestType(
+                kitchen.getPipe().read(IPCDirection::IN, true))
+            == RequestType::Success) {
+            return (kitchen);
+        }
     }
-    for (KitckenProcess &kitchen : kitchens_) {
-        kitchen.pipe.write(PizzaSerializer::createRequestType(RequestType::Availability));
-        return (kitchen);
-    }
+    return (createKitchen());
 }
 
 } // namespace plazza

@@ -31,7 +31,7 @@ std::size_t PizzaSerializer::getDoubleFractional(double value) noexcept
 {
     value *= 10000000;
     auto new_value = static_cast<std::size_t>(value);
-    while ((new_value % 10) == 0)
+    while ((new_value % 10) == 0 && new_value != 0)
         new_value /= 10;
     return (new_value);
 }

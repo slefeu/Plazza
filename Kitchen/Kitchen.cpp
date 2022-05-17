@@ -7,38 +7,42 @@
 
 #include "Kitchen.hpp"
 
+#include <unistd.h>
+
+#include <bitset>
 #include <iostream> //pour des prints de débug
+#include <utility>
 
 #include "DefaultPizzas.hpp"
 #include "Errors.hpp"
 #include "Factory.hpp"
+#include "NamedPipe.hpp"
+#include "Pizza.hpp"
 #include "Serializer.hpp"
-#include <unistd.h>
 
 namespace plazza
 {
 Kitchen::Kitchen(double multiplier,
     unsigned int nb_cooks,
     unsigned int restock_time,
-    NamedPipe& pipe) noexcept
+    std::unique_ptr<NamedPipe> pipe) noexcept
     : cooks_(nb_cooks)
     , max_pizza_(nb_cooks * 2)
     , multiplier_(multiplier)
     , fridge_(Fridge(restock_time / 1000))
-    , pipe_(pipe)
+    , pipe_(std::move(pipe))
 {
 }
 
 void Kitchen::shutdown() noexcept
 {
     running_ = false;
+    pipe_->close();
 }
 
-void Kitchen::addWaitPizza(const pizza::PizzaType type,
-    const pizza::PizzaSize size,
-    const double multiplier)
+void Kitchen::addWaitPizza(pizza::Pizza pizza)
 {
-    // waiting_.emplace(Factory::createPizza(type, size, multiplier));
+    waiting_.emplace(pizza);
 }
 
 std::optional<threads::Task> Kitchen::createTask() noexcept
@@ -63,12 +67,61 @@ void Kitchen::tryMakePizzas() noexcept
     cooks_.waitForExecution();
 }
 
+void Kitchen::sendAvailability() const noexcept
+{
+    // TODO(slefeu): Ajouter une condition de vérification de disponiblité
+    if (true) {
+        pipe_->write(IPCDirection::IN,
+            PizzaSerializer::createRequestType(RequestType::Success));
+    } else {
+        pipe_->write(IPCDirection::IN,
+            PizzaSerializer::createRequestType(RequestType::Error));
+    }
+}
+
+pizza::Pizza Kitchen::getOrder() const noexcept
+{
+    IPCDirection dir_in = IPCDirection::IN;
+    IPCDirection dir_out = IPCDirection::OUT;
+    std::bitset<64> success =
+        PizzaSerializer::createRequestType(RequestType::Success);
+    std::array<std::bitset<64>, 5> packed = {};
+
+    pipe_->write(IPCDirection::IN, success);
+    for (int i = 0; i < 5; i++) {
+        packed[i] = pipe_->read(IPCDirection::OUT, true);
+        pipe_->write(IPCDirection::IN, success);
+    }
+    return (PizzaSerializer::deserializePizza(packed));
+}
+
+void Kitchen::getStatus() const noexcept
+{
+    std::bitset<64> success =
+        PizzaSerializer::createRequestType(RequestType::Success);
+
+    std::cout << "Status : yes" << std::endl;
+    fridge_.display();
+    // TODO(slefeu) : Print les trucs de la kitchen
+    pipe_->write(IPCDirection::IN, success);
+}
+
 void Kitchen::checkRequest() noexcept
 {
-    std::bitset<64> request = pipe_.read(false);
+    std::bitset<64> request = pipe_->read(IPCDirection::OUT, false);
+    RequestType requestType = PizzaSerializer::getRequestType(request);
 
-    if (PizzaSerializer::getRequestType(request) != RequestType::Empty) {
-        std::cout << "Request received" << std::endl;
+    if (requestType != RequestType::Empty) {
+        clock_.reset();
+        if (requestType == RequestType::Availability) {
+            sendAvailability();
+        }
+        if (requestType == RequestType::Order) {
+            addWaitPizza(getOrder());
+        }
+        if (requestType == RequestType::Status) {
+            getStatus();
+        }
     }
 }
 
@@ -104,7 +157,6 @@ void Kitchen::run() noexcept
                 shutdown();
             }
         }
-        sleep(1);
     }
 }
 

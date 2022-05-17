@@ -5,6 +5,7 @@ add_library(
     Clock.cpp
     Fridge.cpp
     Process.cpp
+    KitchenProcess.cpp
     Pizzas/DefaultPizzas.cpp
     Pizzas/Pizza.cpp
     Pizzas/Factory.cpp

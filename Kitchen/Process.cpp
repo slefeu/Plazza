@@ -53,8 +53,8 @@ void Process::kill() const noexcept
     else
         ::exit(0);
 }
+
 pid_t Process::getPid() const
 {
     return isChild() ? ::getpid() : pid_;
-}
 }

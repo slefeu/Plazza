@@ -7,6 +7,7 @@
 
 #include "Fridge.hpp"
 
+#include <cmath>
 #include <iostream>
 
 namespace plazza
@@ -40,11 +41,13 @@ unsigned int Fridge::getRestockTime() const noexcept
 
 void Fridge::remove(const pizza::Ingredients ingredient) noexcept
 {
+    // TODO(slefeu) : Handle new enum class
     stocks_[static_cast<unsigned int>(ingredient)]--;
 }
 
 bool Fridge::contains(const pizza::Ingredients ingredient) const noexcept
 {
+    // TODO(slefeu) : Handle new enum classju
     return (stocks_[static_cast<unsigned int>(ingredient)] != 0);
 }
 
@@ -54,7 +57,7 @@ void Fridge::display() const noexcept
 
     std::cout << "\nKitchen stock:" << std::endl;
     for (auto i : stocks_) {
-        std::cout << static_cast<pizza::Ingredients>(index) << ": "
+        std::cout << static_cast<pizza::Ingredients>(std::pow(2, index)) << ": "
                   << std::to_string(i) << std::endl;
         ++index;
     }

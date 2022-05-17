@@ -24,6 +24,7 @@ class Clock
     bool isNSeconds(unsigned int seconds) noexcept;
     bool isIdle() const noexcept;
     bool getIdle() const noexcept;
+    void reset() noexcept;
 
     template <typename T>
     static auto getSeconds(T seconds) noexcept
@@ -37,5 +38,4 @@ class Clock
     static constexpr unsigned int MAX_TIME = 5;
     std::chrono::high_resolution_clock::time_point start_{
         {std::chrono::high_resolution_clock::now()}};
-    void reset() noexcept;
 };

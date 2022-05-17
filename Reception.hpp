@@ -8,27 +8,22 @@
 #pragma once
 
 #include <map>
-#include <string>
 #include <memory>
+#include <string>
 #include <vector>
 
 #include "Factory.hpp"
+#include "KitchenProcess.hpp"
+#include "NamedPipe.hpp"
 #include "Pizza.hpp"
 #include "Process.hpp"
 #include "Serializer.hpp"
-#include "NamedPipe.hpp"
 
 namespace plazza
 {
-
 static constexpr std::string_view validIgredients =
     "Valid ingredients : Dough, Tomato, Gruyere, Ham, "
     "Mushrooms, Steak, Eggplant, GoatCheese, ChiefLove";
-
-typedef struct KitckenProcess {
-  std::unique_ptr<Process> process;
-  std::unique_ptr<NamedPipe> pipe;
-} KitckenProcess;
 
 class Reception
 {
@@ -62,12 +57,13 @@ class Reception
     void log();
     void list() noexcept;
     void status();
-    KitckenProcess createKitchen() const;
-    KitckenProcess getKitchen();
+    void cleanKitchens() noexcept;
+    KitchenProcess& createKitchen();
+    KitchenProcess& getKitchen();
     // attributes
     std::string command_;
     std::vector<std::string> pizzaTypes_;
-    std::vector<KitckenProcess> kitchens_;
+    std::vector<KitchenProcess> kitchens_;
     std::map<std::string, pizza::PizzaSize> pizzaSizes_;
     std::map<std::string, pizza::Ingredients> ingredients_;
     int cooks_ = 0;
