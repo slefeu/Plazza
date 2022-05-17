@@ -14,14 +14,14 @@ int main(int ac, char** av)
 {
     if (ac != 4) {
         std::cerr << "Not the right amount of arguments" << std::endl;
-        return (84);
+        return (ERROR_CODE);
     }
     try {
         plazza::Reception plazzaReception(av);
         plazzaReception.executeShell();
     } catch (Error const& error) {
         std::cerr << error.what() << std::endl;
-        return (84);
+        return (ERROR_CODE);
     }
-    return (0);
+    return (SUCCESS_CODE);
 }

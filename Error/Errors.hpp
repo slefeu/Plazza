@@ -10,6 +10,9 @@
 #include <exception>
 #include <string>
 
+constexpr unsigned int SUCCESS_CODE = 0;
+constexpr unsigned int ERROR_CODE = 84;
+
 class Error : public std::exception
 {
   public:

@@ -32,6 +32,7 @@ class ThreadPool
 
     void addTask(const Task& task) noexcept;
     void waitForExecution() noexcept;
+    unsigned int getBusyThreads() const noexcept;
 
   protected:
   private:
@@ -43,6 +44,7 @@ class ThreadPool
     std::condition_variable condition_;
     std::mutex wait_mutex_;
     std::condition_variable wait_condition_;
+    unsigned int busyThreads_ = 0;
 
     // methods
     void workerThread() noexcept;

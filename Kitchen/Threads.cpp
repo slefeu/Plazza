@@ -39,8 +39,13 @@ void ThreadPool::workerThread() noexcept
 {
     while (!finished_) {
         auto task = getTask();
-        if (task.has_value())
+        if (task.has_value()) {
+            {
+                std::unique_lock<std::mutex> lock(mutex_);
+                busyThreads_ += 1;
+            }
             executeTask(task.value());
+        }
     }
 }
 
@@ -50,6 +55,7 @@ void ThreadPool::executeTask(const Task& task) noexcept
     {
         std::unique_lock<std::mutex> lock(mutex_);
         wait_condition_.notify_one();
+        busyThreads_ -= 1;
     }
 }
 
@@ -73,4 +79,10 @@ void ThreadPool::addTask(const Task& task) noexcept
     }
     condition_.notify_one();
 }
+
+unsigned int ThreadPool::getBusyThreads() const noexcept
+{
+    return (busyThreads_);
+}
+
 } // namespace threads
