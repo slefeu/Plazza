@@ -112,6 +112,10 @@ void Reception::setUserInput() noexcept
 void Reception::exit() noexcept
 {
     isEnd_ = true;
+
+    for (KitchenProcess& kitchen : kitchens_) {
+        kitchen.getProcess().kill();
+    }
 }
 
 void Reception::status()
