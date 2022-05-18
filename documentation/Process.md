@@ -1,40 +1,23 @@
 # Process
 
-## Description
+This class is a wrapper to the unix fork and wait functions. It allows to create a new process and wait for its termination.
 
-The `Process` class is a wrapper around the `fork()` function. It allows to create a child process and to manage it.
+## Constructors
 
-## Constructor
-
-The constructor of the `Process` class calls the `fork()` function. The `fork()` function creates a child process that is a copy of the parent process. The child process has its own pid. The pid of the parent process is returned by the `fork()` function. If the pid returned by the `fork()` function is 0, it means that we are in the child process.
+The default constructor of this class uses the fork function to create a new process. The process id is saved in the `pid_` member of the class. If the `pid_` member is equal to 0, it means that it is the child process. If it is not equal to 0, it means that it is the parent process.
 
 ## Destructor
 
-The destructor of the `Process` class kills the process if it is still running.
+The destructor kills the child process if it is still alive when the object goes out of scope. The kill function with SIGKILL signal is used to terminate the child process. It does nothing if it is not the parent process.
 
-## Wait
+## Methods
 
-The `wait()` function waits for the process to finish. It calls the `wait()` function. If the process is a child, it calls the `exit()` function.
-
-## IsChild
-
-The `isChild()` function checks if the process is a child. It returns true if the pid returned by the `fork()` function is 0.
-
-## IsRunning
-
-The `isRunning()` function checks if the process is running. It calls the `waitpid()` function with the WNOHANG option. If it returns -1, it means that an error occured and that the process is not running. If it returns 0, it means that the process is still running. Otherwise, it means that the process has finished.
-
-## Kill
-
-The `kill()` function kills the process. It calls the `kill()` function with SIGKILL as parameter. If the process is a child, it calls the `exit()` function.
-
-## GetPid
-
-The `getPid()` function returns the pid of the process. If we are in a child, it returns its own pid with the `getpid()` function. Otherwise, it returns its own pid member variable.
-
-## GetCurrentPid
-
-The `getCurrentPid()` function returns the pid of the current process. It calls the `getpid()` function.
+  * `wait()` : This function waits for the child process to terminate by calling the wait function of the unix api. This function does nothing if it is the child process.
+  * `isChild()` : This function returns true if it is the child process and false otherwise.
+  * `isRunning()` : This function uses the waitpid function to check if the child process is running. It returns false if it is not the parent process or if the waitpid function fails.
+  * `kill()` : This function kills the child process using the kill function of the unix api with SIGKILL signal. If it is the child process, it calls exit with 0 as parameter.
+  * `getPid()` : This function returns the pid of the child process. If it is not the parent process, it calls getpid of unix api to get its current pid.
+  * `getCurrentPid()` : This function returns the current pid using getpid of unix api.
 
 ## Usage
 
