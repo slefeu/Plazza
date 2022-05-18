@@ -47,6 +47,8 @@ class Reception
     static void sendPizza(KitchenProcess&, pizza::Pizza);
     static pizza::Pizza getPizza(KitchenProcess&);
     static void getCookedPizza(KitchenProcess&);
+    static void addLog(std::string string) noexcept;
+    static void addLog(pizza::Pizza&) noexcept;
     void initPizzas();
     bool checkPizzaType(std::string&);
     bool checkPizzaSize(std::string&);

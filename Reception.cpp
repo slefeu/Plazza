@@ -12,6 +12,7 @@
 #include <bitset>
 #include <csignal>
 #include <functional>
+#include <iomanip>
 #include <iostream>
 #include <map>
 #include <memory>
@@ -88,6 +89,9 @@ Reception::Reception(char** av)
         {"GoatCheese", pizza::Ingredients::GoatCheese},
         {"ChiefLove", pizza::Ingredients::ChiefLove}};
     initPizzas();
+    std::ofstream ofs;
+    ofs.open("history.log", std::ofstream::out | std::ofstream::trunc);
+    ofs.close();
 }
 
 void Reception::setUserInput() noexcept
@@ -339,6 +343,30 @@ pizza::Pizza Reception::getPizza(KitchenProcess& kitchen)
     return (PizzaSerializer::deserializePizza(packed));
 }
 
+void Reception::addLog(std::string string) noexcept
+{
+    std::time_t time = std::time(nullptr);
+    std::tm* now = std::localtime(&time);
+    std::ofstream fout("history.log", std::ios_base::app);
+
+    if(fout.is_open()) {
+        fout << "[" << std::put_time(now,"%Y/%m/%d %T") << "] " << string << std::endl;
+    }
+    fout.close();
+}
+
+void Reception::addLog(pizza::Pizza &pizza) noexcept
+{
+    std::time_t time = std::time(nullptr);
+    std::tm* now = std::localtime(&time);
+    std::ofstream fout("history.log", std::ios_base::app);
+
+    if(fout.is_open()) {
+        fout << "[" << std::put_time(now,"%Y/%m/%d %T") << "] " << pizza << std::endl;
+    }
+    fout.close();
+}
+
 void Reception::getCookedPizza(KitchenProcess& kitchen)
 {
     kitchen.getPipe().write(IPCDirection::OUT,
@@ -350,6 +378,7 @@ void Reception::getCookedPizza(KitchenProcess& kitchen)
     for (int i = 0; i < count; i++) {
         pizza::Pizza pizza = getPizza(kitchen);
         std::cout << "[RECEPTION] " << pizza << std::endl;
+        addLog(pizza);
     }
 }
 
