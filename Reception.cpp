@@ -7,6 +7,8 @@
 
 #include "Reception.hpp"
 
+#include <poll.h>
+
 #include <bitset>
 #include <csignal>
 #include <functional>
@@ -91,14 +93,19 @@ Reception::Reception(char** av)
 void Reception::setUserInput() noexcept
 {
     std::string command;
-    std::istream& stream = std::cin;
+    struct pollfd pfd = { STDIN_FILENO, POLLIN, 0 };
 
-    getline(stream, command);
-    if (stream.eof() || std::cin.fail()) {
+    int ret = poll(&pfd, 1, 1000);
+    if (ret == 1) {
+        getline(std::cin, command);
+        if (std::cin.eof() || std::cin.fail()) {
+            command_ = "";
+            exit();
+        } else {
+            command_ = command;
+        }
+    } else if (ret == 0) {
         command_ = "";
-        exit();
-    } else {
-        command_ = command;
     }
 }
 
@@ -111,7 +118,7 @@ void Reception::status()
 {
     cleanKitchens();
     if (kitchens_.empty())
-        std::cout << "No kitchen running" << std::endl;
+        std::cout << "[RECEPTION] No kitchen running" << std::endl;
     for (KitchenProcess& kitchen : kitchens_) {
         kitchen.getPipe().write(IPCDirection::OUT,
             PizzaSerializer::createRequestType(RequestType::Status));
@@ -124,7 +131,7 @@ void Reception::list() noexcept
 {
     std::map<std::string, std::function<pizza::Pizza()>> pizzaList =
         pizzaFactory_.getAll();
-    std::cout << "Pizza list : " << std::endl;
+    std::cout << "[RECEPTION] Pizza list : " << std::endl;
     for (auto const& [key, val] : pizzaList) {
         std::cout << "- " << key << std::endl;
     }
@@ -261,6 +268,7 @@ void Reception::orderPizza(std::string& order)
     for (int i = 0; i < std::stoi(number); i++) {
         KitchenProcess& kitchen = getKitchen();
         sendPizza(kitchen, pizza);
+        std::cout << "[RECEPTION] Pizza send to kitchen " << kitchen.getProcess().getPid() << " : " << pizza << std::endl;;
     }
 }
 
@@ -302,13 +310,54 @@ void Reception::executeCommand()
     checkOrderSyntax();
 }
 
+void Reception::checkCookedPizza()
+{
+    RequestType answer = RequestType::Empty;
+
+    for (KitchenProcess& kitchen : kitchens_) {
+        answer = PizzaSerializer::getRequestType(kitchen.getPipe().read(IPCDirection::IN, false));
+        if (answer == RequestType::Cooked) {
+            getCookedPizza(kitchen);
+        }
+    } 
+}
+
+pizza::Pizza Reception::getPizza(KitchenProcess& kitchen)
+{
+    std::array<std::bitset<64>, 5> packed = {};
+    std::bitset<64> success =
+        PizzaSerializer::createRequestType(RequestType::Success);
+
+    for (int i = 0; i < 5; i++) {
+        packed[i] = kitchen.getPipe().read(IPCDirection::IN, true);
+        kitchen.getPipe().write(IPCDirection::OUT, success);
+    }
+    return (PizzaSerializer::deserializePizza(packed));
+}
+
+void Reception::getCookedPizza(KitchenProcess& kitchen)
+{
+    kitchen.getPipe().write(IPCDirection::OUT,
+        PizzaSerializer::createRequestType(RequestType::Success));
+    unsigned long count = kitchen.getPipe().read(IPCDirection::IN, true).to_ulong();
+    kitchen.getPipe().write(IPCDirection::OUT,
+        PizzaSerializer::createRequestType(RequestType::Success));
+    std::cout << "[RECEPTION] " << count << " pizzas cooked and ready from " << kitchen.getProcess().getPid() << " : " << std::endl;
+    for (int i = 0; i < count; i++) {
+        pizza::Pizza pizza = getPizza(kitchen);
+        std::cout << "[RECEPTION] " << pizza << std::endl;
+    }
+}
+
 void Reception::executeShell()
 {
     while (!isEnd_) {
-        std::cout << "> ";
         try {
             setUserInput();
-            executeCommand();
+            checkCookedPizza();
+            if (!command_ .empty()) {
+                executeCommand();
+            }
         } catch (const Error& error) {
             std ::cout << error.what() << std ::endl;
         }

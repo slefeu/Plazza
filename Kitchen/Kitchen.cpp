@@ -9,6 +9,7 @@
 
 #include <unistd.h>
 
+#include <bitset>
 #include <iostream>
 
 #include "DefaultPizzas.hpp"
@@ -38,6 +39,7 @@ void Kitchen::shutdown() noexcept
 void Kitchen::run() noexcept
 {
     while (running_) {
+        sendBackCooked();
         checkRequest();
         if (!clock_.getIdle()) {
             restock();
@@ -52,6 +54,32 @@ void Kitchen::run() noexcept
             if (clock_.isIdle()) {
                 shutdown();
             }
+        }
+    }
+}
+
+void Kitchen::sendPizza(pizza::Pizza pizza)
+{
+    std::array<std::bitset<64>, PizzaSerializer::ARRAY_SIZE> pizza_serialized =
+        PizzaSerializer::serializePizza(pizza);
+
+    for (const std::bitset<64>& bitset : pizza_serialized) {
+        pipe_->write(IPCDirection::IN, bitset);
+        pipe_->read(IPCDirection::OUT, true);
+    }
+}
+
+void Kitchen::sendBackCooked()
+{
+    if (!cooked_.empty()) {
+        pipe_->write(IPCDirection::IN,
+            PizzaSerializer::createRequestType(RequestType::Cooked));
+        pipe_->read(IPCDirection::OUT, true);
+        pipe_->write(IPCDirection::IN, std::bitset<64>(cooked_.size()));
+        pipe_->read(IPCDirection::OUT, true);
+        while (!cooked_.empty()) {
+            sendPizza(cooked_.front());
+            cooked_.pop();
         }
     }
 }

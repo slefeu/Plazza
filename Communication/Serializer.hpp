@@ -18,7 +18,8 @@ enum class RequestType {
     Success = 2,
     Availability = 4,
     Order = 8,
-    Status = 16
+    Status = 16,
+    Cooked = 32
 };
 class PizzaSerializer
 {
