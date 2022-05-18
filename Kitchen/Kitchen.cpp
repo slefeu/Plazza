@@ -7,6 +7,8 @@
 
 #include "Kitchen.hpp"
 
+#include <unistd.h>
+
 #include <iostream>
 
 #include "DefaultPizzas.hpp"
@@ -143,8 +145,8 @@ void Kitchen::displayBusyCooks() noexcept
     std::unique_lock<std::mutex> lock(mutex_);
     auto list = cooking_;
 
-    std::cout << "\nBusy cooks :" << std::endl;
-    for (std::size_t it = 0; it < list.size(); ++it) {
+    std::cout << "\nBusy cooks : " << list.size() << std::endl;
+    for (std::size_t it = 0; it < cooking_.size(); ++it) {
         std::cout << "Cook " << count
                   << " cooking: " << list.front().getPizzaType() << std::endl;
         list.pop();
