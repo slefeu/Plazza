@@ -32,7 +32,7 @@ The `charToBitset` and `bitsetToChar` methods are used to convert between bitset
 The `bitsetToChar` method converts a bitset to a string by converting each byte of the bitset to a character.
 The `charToBitset` method converts a string to a bitset by converting each character to a byte.
 
-## Usage
+## Usage example :
 
 ```c++
 #include "NamedPipe.hpp"
