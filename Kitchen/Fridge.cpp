@@ -7,6 +7,9 @@
 
 #include "Fridge.hpp"
 
+#include <cmath>
+#include <iomanip>
+#include <ios>
 #include <iostream>
 
 namespace plazza
@@ -18,18 +21,10 @@ Fridge::Fridge(unsigned int time) noexcept
 
 void Fridge::restock() noexcept
 {
-    for (std::size_t index : stocks_) {
-        if (stocks_[index] < MAX_STOCK) {
-            stocks_[index]++;
+    for (std::size_t& stock : stocks_) {
+        if (stock < MAX_STOCK) {
+            stock++;
         }
-    }
-}
-
-void Fridge::takeIngredients(
-    const std::vector<pizza::Ingredients>& list) noexcept
-{
-    for (auto it = std::begin(list); it != std::end(list); ++it) {
-        remove(*it);
     }
 }
 
@@ -38,33 +33,43 @@ unsigned int Fridge::getRestockTime() const noexcept
     return (restock_time_);
 }
 
-void Fridge::remove(const pizza::Ingredients ingredient) noexcept
+void Fridge::takeIngredients(
+    const std::vector<pizza::Ingredients>& list) noexcept
 {
-    stocks_[static_cast<unsigned int>(ingredient)]--;
+    for (auto it = std::begin(list); it != std::end(list); ++it) {
+        remove(std::log2(static_cast<double>(*it)));
+    }
 }
 
-bool Fridge::contains(const pizza::Ingredients ingredient) const noexcept
+void Fridge::remove(const double ingredient) noexcept
 {
-    return (stocks_[static_cast<unsigned int>(ingredient)] != 0);
+    stocks_[static_cast<size_t>(ingredient)]--;
+}
+
+bool Fridge::contains(const double ingredient) const noexcept
+{
+    return (stocks_[static_cast<size_t>(ingredient)] != 0);
 }
 
 void Fridge::display() const noexcept
 {
     unsigned int index = 0;
 
-    std::cout << "\nKitchen stock:" << std::endl;
+    std::cout << "\nKitchen stocks:" << std::endl;
+    std::cout << "---------------------" << std::endl;
     for (auto i : stocks_) {
-        std::cout << static_cast<pizza::Ingredients>(index) << ": "
+        std::cout << std::left << std::setw(20) << static_cast<pizza::Ingredients>(std::pow(2, index))
                   << std::to_string(i) << std::endl;
         ++index;
     }
+    std::cout << "---------------------" << std::endl;
 }
 
 bool Fridge::hasEnough(
     const std::vector<pizza::Ingredients>& list) const noexcept
 {
-    for (auto i : list) {
-        if (!contains(i))
+    for (auto it = std::begin(list); it != std::end(list); ++it) {
+        if (!contains(std::log2(static_cast<double>(*it))))
             return (false);
     }
     return (true);

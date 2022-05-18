@@ -8,10 +8,13 @@
 #pragma once
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "Factory.hpp"
+#include "KitchenProcess.hpp"
+#include "NamedPipe.hpp"
 #include "Pizza.hpp"
 #include "Process.hpp"
 #include "Serializer.hpp"
@@ -21,6 +24,7 @@ namespace plazza
 static constexpr std::string_view validIgredients =
     "Valid ingredients : Dough, Tomato, Gruyere, Ham, "
     "Mushrooms, Steak, Eggplant, GoatCheese, ChiefLove";
+
 class Reception
 {
   public:
@@ -40,6 +44,11 @@ class Reception
     // methods
     static double parseArgument(const std::string& str);
     static bool checkPizzaNumber(std::string);
+    static void sendPizza(KitchenProcess&, pizza::Pizza);
+    static pizza::Pizza getPizza(KitchenProcess&);
+    static void getCookedPizza(KitchenProcess&);
+    static void addLog(std::string string) noexcept;
+    static void addLog(pizza::Pizza&) noexcept;
     void initPizzas();
     bool checkPizzaType(std::string&);
     bool checkPizzaSize(std::string&);
@@ -49,15 +58,17 @@ class Reception
     bool checkOrder(std::string&);
     void setUserInput() noexcept;
     void addPizza();
+    void checkCookedPizza();
     void exit() noexcept;
-    void log();
     void list() noexcept;
     void status();
-    void createKitchen();
+    void cleanKitchens() noexcept;
+    KitchenProcess& createKitchen();
+    KitchenProcess& getKitchen();
     // attributes
     std::string command_;
     std::vector<std::string> pizzaTypes_;
-    std::vector<Process> kitchens_;
+    std::vector<KitchenProcess> kitchens_;
     std::map<std::string, pizza::PizzaSize> pizzaSizes_;
     std::map<std::string, pizza::Ingredients> ingredients_;
     int cooks_ = 0;

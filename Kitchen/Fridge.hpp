@@ -37,7 +37,7 @@ class Fridge
     std::array<std::size_t, 9> stocks_{{5, 5, 5, 5, 5, 5, 5, 5, 5}};
 
     // methods
-    bool contains(pizza::Ingredients ingredient) const noexcept;
-    void remove(pizza::Ingredients ingredient) noexcept;
+    bool contains(const double ingredient) const noexcept;
+    void remove(const double ingredient) noexcept;
 };
 }

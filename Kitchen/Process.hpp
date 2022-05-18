@@ -7,7 +7,11 @@
 
 #pragma once
 
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
+
+#include <memory>
 
 class Process
 {
@@ -24,6 +28,8 @@ class Process
     bool isChild() const noexcept;
     bool isRunning() const noexcept;
     void kill() const noexcept;
+    pid_t getPid() const;
+    static pid_t getCurrentPid() noexcept;
 
   private:
     pid_t pid_;

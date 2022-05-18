@@ -10,6 +10,9 @@
 #include <exception>
 #include <string>
 
+constexpr unsigned int ERROR_CODE = 84;
+constexpr unsigned int SUCCESS_CODE = 84;
+
 class Error : public std::exception
 {
   public:
@@ -52,6 +55,22 @@ class ExecutionError : public Error
 
     ExecutionError& operator=(const ExecutionError& rhs) noexcept = default;
     ExecutionError& operator=(ExecutionError&& rhs) noexcept = default;
+
+  protected:
+  private:
+};
+
+class CommunicationError : public Error
+{
+  public:
+    explicit CommunicationError(std::string) noexcept;
+    CommunicationError(const CommunicationError& other) noexcept = default;
+    CommunicationError(CommunicationError&& other) noexcept = default;
+    ~CommunicationError() noexcept override = default;
+
+    CommunicationError& operator=(
+        const CommunicationError& rhs) noexcept = default;
+    CommunicationError& operator=(CommunicationError&& rhs) noexcept = default;
 
   protected:
   private:

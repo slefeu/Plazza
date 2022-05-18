@@ -5,6 +5,7 @@ add_library(
     Clock.cpp
     Fridge.cpp
     Process.cpp
+    KitchenProcess.cpp
     Pizzas/DefaultPizzas.cpp
     Pizzas/Pizza.cpp
     Pizzas/Factory.cpp
@@ -13,5 +14,6 @@ add_library(
 target_include_directories(Kitchen PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
     "${CMAKE_CURRENT_SOURCE_DIR}/Pizzas"
     "${PROJECT_SOURCE_DIR}/Error"
+    "${PROJECT_SOURCE_DIR}/Communication"
 
 )

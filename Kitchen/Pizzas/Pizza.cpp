@@ -98,11 +98,10 @@ std::ostream& operator<<(std::ostream& output, PizzaType type) noexcept
 
 std::ostream& operator<<(std::ostream& output, Pizza& pizza) noexcept
 {
-    output << "Type : " << pizza.getPizzaType() << std::endl;
-    output << "Size : " << pizza.getPizzaSize() << std::endl;
-    output << "Ingredients : " << std::endl;
+    output << pizza.getPizzaType()
+           << " " << pizza.getPizzaSize();
     for (const auto& ingredient : pizza.getIngredients()) {
-        output << "- " << ingredient << std::endl;
+        output << " " << ingredient;
     }
     return (output);
 }

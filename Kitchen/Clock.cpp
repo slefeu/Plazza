@@ -33,11 +33,16 @@ void Clock::reset() noexcept
     start_ = std::chrono::high_resolution_clock::now();
 }
 
+void Clock::resetStocks() noexcept
+{
+    restock_ = std::chrono::high_resolution_clock::now();
+}
+
 bool Clock::isNSeconds(unsigned int seconds) noexcept
 {
     auto end = std::chrono::high_resolution_clock::now();
 
-    if (std::chrono::duration_cast<std::chrono::seconds>(end - start_).count()
+    if (std::chrono::duration_cast<std::chrono::seconds>(end - restock_).count()
         >= seconds) {
         return (true);
     }

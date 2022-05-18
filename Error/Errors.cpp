@@ -20,3 +20,6 @@ ArgumentError::ArgumentError(std::string message) noexcept
 
 ExecutionError::ExecutionError(std::string message) noexcept
     : Error(std::move(message)){};
+
+CommunicationError::CommunicationError(std::string message) noexcept
+    : Error(std::move(message)){};
