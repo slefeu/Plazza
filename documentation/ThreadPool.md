@@ -44,7 +44,7 @@ void waitForExecution() noexcept
 - It also uses a unique lock to ensure that the mutex is released when it goes out of scope.
 
 ```c++
-void getBusyThreads() const noexcept
+unsigned int getBusyThreads() const noexcept
 ```
 - Returns the number of busy threads in the pool.
 
