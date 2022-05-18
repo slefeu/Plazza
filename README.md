@@ -39,7 +39,7 @@ The first parameter is a `multiplier` for the cooking time of the pizzas.
 -> If the value is between 0 and 1, kitchens will cook faster  
 -> Else it will cook slower  
   
-The second parameter is the ``number of cooks` per kitchen.
+The second parameter is the `number of cooks` per kitchen.
 Each kitchen represents its cooks in a thread pool.
   
 The third parameter is the `time` in milliseconds, used by the kitchen to replace ingredients.
