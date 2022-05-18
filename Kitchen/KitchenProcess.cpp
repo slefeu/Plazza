@@ -19,12 +19,12 @@ KitchenProcess::KitchenProcess(
 {
 }
 
-NamedPipe& KitchenProcess::getPipe()
+NamedPipe& KitchenProcess::getPipe() const noexcept
 {
     return (*pipe_);
 }
 
-Process& KitchenProcess::getProcess()
+Process& KitchenProcess::getProcess() const noexcept
 {
     return (*process_);
 }

@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <unistd.h>
+
 #include <memory>
 
 #include "Clock.hpp"
@@ -52,8 +54,8 @@ class Kitchen
     std::optional<threads::Task> createTask() noexcept;
     void sendAvailability() const noexcept;
     pizza::Pizza getOrder() const noexcept;
-    void sendBackCooked();
-    void sendPizza(pizza::Pizza pizza);
+    void sendBackCooked() noexcept;
+    void sendPizza(pizza::Pizza pizza) const noexcept;
     void getStatus() noexcept;
     void restock() noexcept;
     void tryMakePizzas() noexcept;

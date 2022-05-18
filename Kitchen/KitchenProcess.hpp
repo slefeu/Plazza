@@ -15,15 +15,18 @@
 class KitchenProcess
 {
   public:
+    KitchenProcess() noexcept = delete;
     KitchenProcess(
         std::unique_ptr<Process>, std::unique_ptr<NamedPipe>) noexcept;
-    KitchenProcess(KitchenProcess const& other) noexcept = delete;
+    KitchenProcess(const KitchenProcess& other) noexcept = delete;
     KitchenProcess(KitchenProcess&& other) noexcept = default;
-    KitchenProcess& operator=(KitchenProcess const& other) noexcept = delete;
-    KitchenProcess& operator=(KitchenProcess&& other) noexcept = default;
     ~KitchenProcess() noexcept = default;
-    NamedPipe& getPipe();
-    Process& getProcess();
+
+    KitchenProcess& operator=(const KitchenProcess& rhs) noexcept = delete;
+    KitchenProcess& operator=(KitchenProcess&& rhs) noexcept = default;
+
+    NamedPipe& getPipe() const noexcept;
+    Process& getProcess() const noexcept;
 
   private:
     std::unique_ptr<Process> process_;

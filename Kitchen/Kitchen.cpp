@@ -58,7 +58,7 @@ void Kitchen::run() noexcept
     }
 }
 
-void Kitchen::sendPizza(pizza::Pizza pizza)
+void Kitchen::sendPizza(pizza::Pizza pizza) const noexcept
 {
     std::array<std::bitset<64>, PizzaSerializer::ARRAY_SIZE> pizza_serialized =
         PizzaSerializer::serializePizza(pizza);
@@ -69,7 +69,7 @@ void Kitchen::sendPizza(pizza::Pizza pizza)
     }
 }
 
-void Kitchen::sendBackCooked()
+void Kitchen::sendBackCooked() noexcept
 {
     if (!cooked_.empty()) {
         pipe_->write(IPCDirection::IN,

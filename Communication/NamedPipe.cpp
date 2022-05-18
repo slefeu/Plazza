@@ -19,7 +19,7 @@
 
 #include "Errors.hpp"
 
-NamedPipe::NamedPipe(std::string name)
+NamedPipe::NamedPipe(const std::string& name)
     : path_("/tmp/" + name)
 {
     std::string outpath = path_ + ".out";
@@ -33,7 +33,7 @@ NamedPipe::NamedPipe(std::string name)
     }
 }
 
-std::bitset<64> NamedPipe::read(IPCDirection direction, bool wait) const
+std::bitset<64> NamedPipe::read(const IPCDirection& direction, bool wait) const
 {
     int fd = direction == IPCDirection::IN ? fd_in_ : fd_out_;
 
@@ -52,7 +52,7 @@ std::bitset<64> NamedPipe::read(IPCDirection direction, bool wait) const
     return charToBitset(str);
 }
 
-void NamedPipe::write(IPCDirection direction, std::bitset<64> bitset) const
+void NamedPipe::write(const IPCDirection& direction, const std::bitset<64>& bitset) const
 {
     int fd = direction == IPCDirection::IN ? fd_in_ : fd_out_;
 
@@ -62,7 +62,7 @@ void NamedPipe::write(IPCDirection direction, std::bitset<64> bitset) const
     }
 }
 
-std::string NamedPipe::bitsetToChar(std::bitset<64> bitset)
+std::string NamedPipe::bitsetToChar(std::bitset<64> bitset) noexcept
 {
     std::string result;
     for (int i = 0; i < 8; i++) {
@@ -73,7 +73,7 @@ std::string NamedPipe::bitsetToChar(std::bitset<64> bitset)
     return result;
 }
 
-std::bitset<64> NamedPipe::charToBitset(std::string buffer)
+std::bitset<64> NamedPipe::charToBitset(const std::string& buffer) noexcept
 {
     std::bitset<64> bitset;
     for (int i = 0; i < 8; i++) {
@@ -83,7 +83,7 @@ std::bitset<64> NamedPipe::charToBitset(std::string buffer)
     return bitset;
 }
 
-void NamedPipe::close() const
+void NamedPipe::close() const noexcept
 {
     ::close(fd_in_);
     ::close(fd_out_);

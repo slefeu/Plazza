@@ -112,7 +112,7 @@ pizza::Pizza PizzaSerializer::deserializePizza(
 RequestType PizzaSerializer::getRequestType(std::bitset<64> type)
 {
     for (int i = 0; i < 6; i++) {
-        if (type == std::bitset<64>(std::pow(2, i))) {
+        if (type == std::bitset<64>(static_cast<unsigned long long>(std::pow(2, i)))) {
             return (static_cast<RequestType>(std::pow(2, i)));
         }
     }
@@ -121,5 +121,5 @@ RequestType PizzaSerializer::getRequestType(std::bitset<64> type)
 
 std::bitset<64> PizzaSerializer::createRequestType(RequestType type)
 {
-    return (std::bitset<64>(static_cast<int>(type)));
+    return {std::bitset<64>(static_cast<int>(type))};
 }

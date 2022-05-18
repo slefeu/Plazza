@@ -7,12 +7,6 @@
 
 #include "Process.hpp"
 
-#include <sys/types.h>
-#include <sys/wait.h>
-
-#include <iostream>
-#include <memory>
-
 Process::Process() noexcept
     : pid_(::fork())
 {
@@ -56,5 +50,5 @@ void Process::kill() const noexcept
 
 pid_t Process::getPid() const
 {
-    return isChild() ? ::getpid() : pid_;
+    return (isChild() ? ::getpid() : pid_);
 }
