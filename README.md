@@ -57,3 +57,7 @@ The third parameter is the `time` in milliseconds, used by the kitchen to replac
 - C++ named pipe wrapper : [documentation](./documentation/NamedPipe.md)
     * The `NamedPipe` class is a wrapper around the `mkfifo` and `open` system calls.
     * It allows to create a named pipe with two directions, one for reading and one for writing.
+
+- C++ class object serialization and deserialization : [documentation](./documentation/Serializer.md)
+    * Send serialized datas during inter-process communication
+    * Recovers the datas and recreates an instance of the class with the provided serialized datas
