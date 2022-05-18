@@ -76,7 +76,7 @@ std::optional<Task> ThreadPool::getTask() noexcept
 - The method uses a mutex and a condition variable to avoid busy waiting.
 - It also uses a unique lock to ensure that the mutex is released when it goes out of scope.
 - It returns a `std::nullopt` if no task is found in the queue.
--
+
 ## Attributes
 
 * `finished_` : A boolean that is set to true when the thread pool is finished.
