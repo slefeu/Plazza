@@ -108,12 +108,12 @@ std::optional<threads::Task> Kitchen::createTask() noexcept
     pizza::Pizza pizza = waiting_.front();
     auto list = pizza.getIngredients();
 
-    if (!fridge_.hasEnough(list) || cooks_.getBusyThreads() == nbCooks)
-        return (std::nullopt);
-    fridge_.takeIngredients(list);
-    waiting_.pop();
     {
         std::unique_lock<std::mutex> lock(mutex_);
+        if (!fridge_.hasEnough(list) || cooking_.size() == nbCooks)
+            return (std::nullopt);
+        fridge_.takeIngredients(list);
+        waiting_.pop();
         cooking_.emplace(pizza);
     }
     return ([this, pizza] { return plazza::Kitchen::task(pizza); });
@@ -129,7 +129,7 @@ void Kitchen::task(pizza::Pizza pizza) noexcept
 
 void Kitchen::sendAvailability() const noexcept
 {
-    if (waiting_.size() + cooking_.size() < nbCooks * 2) {
+    if (waiting_.size() < nbCooks) {
         pipe_->write(IPCDirection::IN,
             PizzaSerializer::createRequestType(RequestType::Success));
     } else {
@@ -162,8 +162,8 @@ void Kitchen::displayWaitingPizzas() const noexcept
         std::cout << "\nNo pizza waiting to be cooked" << std::endl;
     } else {
         std::cout << "\nPizzas waiting to be cooked :" << std::endl;
-        for (std::size_t it = 0; it < list.size(); ++it) {
-            std::cout << "- " <<list.front() << std::endl;
+        for (std::size_t it = 0; it < waiting_.size(); ++it) {
+            std::cout << "- " << list.front() << std::endl;
             list.pop();
         }
     }
