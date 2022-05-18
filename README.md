@@ -49,3 +49,11 @@ The third parameter is the `time` in milliseconds, used by the kitchen to replac
 - C++ thread pool implementation : [documentation](./documentation/ThreadPool.md)
     * Generic creation and run of a thread pool.
     * You can choose the number of threads you want in your pool.
+
+- C++ process wrapper : [documentation](./documentation/Process.md)
+    * This class is a wrapper to the unix `fork` and `wait` functions
+    * It allows to create a new process and wait for its termination.
+
+- C++ named pipe wrapper : [documentation](./documentation/NamedPipe.md)
+    * The `NamedPipe` class is a wrapper around the `mkfifo` and `open` system calls.
+    * It allows to create a named pipe with two directions, one for reading and one for writing.
