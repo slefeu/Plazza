@@ -1,5 +1,5 @@
 
-# NamedPipe
+# FIFO wrapper : NamedPipe class
 
 ## Description
 
@@ -34,7 +34,7 @@ The `charToBitset` method converts a string to a bitset by converting each chara
 
 ## Usage
 
-```cpp
+```c++
 #include "NamedPipe.hpp"
 
 int main()
