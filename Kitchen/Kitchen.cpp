@@ -7,17 +7,10 @@
 
 #include "Kitchen.hpp"
 
-#include <unistd.h>
-
-#include <bitset>
-#include <iostream> //pour des prints de débug
-#include <utility>
+#include <iostream>
 
 #include "DefaultPizzas.hpp"
-#include "Errors.hpp"
 #include "Factory.hpp"
-#include "NamedPipe.hpp"
-#include "Pizza.hpp"
 #include "Serializer.hpp"
 
 namespace plazza
@@ -40,7 +33,39 @@ void Kitchen::shutdown() noexcept
     pipe_->close();
 }
 
-void Kitchen::addWaitPizza(pizza::Pizza pizza)
+void Kitchen::run() noexcept
+{
+    while (running_) {
+        checkRequest();
+        if (!clock_.getIdle()) {
+            restock();
+            tryMakePizzas();
+            {
+                std::unique_lock<std::mutex> lock(mutex_);
+                if (waiting_.empty() && cooked_.empty() && cooking_.empty()) {
+                    clock_.setIdle(true);
+                }
+            }
+        } else {
+            if (clock_.isIdle()) {
+                shutdown();
+            }
+        }
+    }
+}
+
+void Kitchen::tryMakePizzas() noexcept
+{
+    if (!waiting_.empty()) {
+        auto task = createTask();
+        if (task.has_value())
+            cooks_.addTask(task.value());
+        restock();
+        clock_.setIdle(false);
+    }
+}
+
+void Kitchen::addWaitPizza(pizza::Pizza pizza) noexcept
 {
     waiting_.emplace(pizza);
 }
@@ -54,19 +79,19 @@ std::optional<threads::Task> Kitchen::createTask() noexcept
         return (std::nullopt);
     fridge_.takeIngredients(list);
     waiting_.pop();
-    cooking_.emplace(pizza);
+    {
+        std::unique_lock<std::mutex> lock(mutex_);
+        cooking_.emplace(pizza);
+    }
     return ([this, pizza] { return plazza::Kitchen::task(pizza); });
 }
 
-void Kitchen::tryMakePizzas() noexcept
+void Kitchen::task(pizza::Pizza pizza) noexcept
 {
-    if (!waiting_.empty()) {
-        auto task = createTask();
-        if (task.has_value())
-            cooks_.addTask(task.value());
-        restock();
-        clock_.setIdle(false);
-    }
+    std::this_thread::sleep_for(Clock::getSeconds(pizza.getCookingTime()));
+    std::unique_lock<std::mutex> lock(mutex_);
+    remove(pizza);
+    cooked_.emplace(pizza);
 }
 
 void Kitchen::sendAvailability() const noexcept
@@ -111,9 +136,11 @@ void Kitchen::displayWaitingPizzas() const noexcept
     }
 }
 
-void Kitchen::displayBusyCooks() const noexcept
+void Kitchen::displayBusyCooks() noexcept
 {
     int count = 1;
+
+    std::unique_lock<std::mutex> lock(mutex_);
     auto list = cooking_;
 
     std::cout << "\nBusy cooks :" << std::endl;
@@ -132,7 +159,7 @@ void Kitchen::displayAvailableCooks() const noexcept
               << std::endl;
 }
 
-void Kitchen::getStatus() const noexcept
+void Kitchen::getStatus() noexcept
 {
     std::bitset<64> success =
         PizzaSerializer::createRequestType(RequestType::Success);
@@ -171,35 +198,6 @@ void Kitchen::restock() noexcept
         fridge_.restock();
         clock_.resetStocks();
     }
-}
-
-void Kitchen::run() noexcept
-{
-    while (running_) {
-        checkRequest();
-        if (!clock_.getIdle()) {
-            restock();
-            tryMakePizzas();
-            {
-                std::unique_lock<std::mutex> lock(mutex_);
-                if (waiting_.empty() && cooked_.empty() && cooking_.empty()) {
-                    clock_.setIdle(true);
-                }
-            }
-        } else {
-            if (clock_.isIdle()) {
-                shutdown();
-            }
-        }
-    }
-}
-
-void Kitchen::task(pizza::Pizza pizza) noexcept
-{
-    std::this_thread::sleep_for(Clock::getSeconds(pizza.getCookingTime()));
-    std::unique_lock<std::mutex> lock(mutex_);
-    remove(pizza);
-    cooked_.emplace(pizza);
 }
 
 void Kitchen::remove(pizza::Pizza pizza) noexcept
