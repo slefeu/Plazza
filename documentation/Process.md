@@ -44,7 +44,7 @@ pid_t getPid() const
 - This method returns the pid of the child process.
 - If it is not the parent process, it calls the UNIX `gitpid`function to get its current pid.
 
-## Usage
+## Usage example:
 
 ```c++
 #include "Process.hpp"
