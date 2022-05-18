@@ -10,6 +10,13 @@
 #include <cmath>
 #include <map>
 
+/**
+ * @brief Convert an enum to a bitset
+ *
+ * @param enum_value The enum to convert
+ * @param value The bitset to fill
+ * @return std::bitset<64> The filled bitset
+ */
 std::bitset<64> PizzaSerializer::enumToBitset(
     unsigned int enum_value, std::bitset<64> value) noexcept
 {
@@ -17,6 +24,12 @@ std::bitset<64> PizzaSerializer::enumToBitset(
     return (value);
 }
 
+/**
+ * @brief Convert a list of enum to a bitset
+ *
+ * @param ingredients The list of enum to convert
+ * @return std::bitset<64> The filled bitset
+ */
 std::bitset<64> PizzaSerializer::enumlistToBitset(
     const std::vector<pizza::Ingredients>& ingredients) noexcept
 {
@@ -27,6 +40,12 @@ std::bitset<64> PizzaSerializer::enumlistToBitset(
     return (value);
 }
 
+/**
+ * @brief Get the fractional part of a double
+ *
+ * @param value The double to get the fractional part
+ * @return std::size_t The fractional part
+ */
 std::size_t PizzaSerializer::getDoubleFractional(double value) noexcept
 {
     value *= 10000000;
@@ -36,6 +55,12 @@ std::size_t PizzaSerializer::getDoubleFractional(double value) noexcept
     return (new_value);
 }
 
+/**
+ * @brief Serialize a pizza
+ *
+ * @param pizza The pizza to serialize
+ * @return std::array<std::bitset<64>, PizzaSerializer::ARRAY_SIZE> The serialized pizza
+ */
 std::array<std::bitset<64>, PizzaSerializer::ARRAY_SIZE>
 PizzaSerializer::serializePizza(const pizza::Pizza& pizza) noexcept
 {
@@ -56,18 +81,37 @@ PizzaSerializer::serializePizza(const pizza::Pizza& pizza) noexcept
     return (packed);
 }
 
+/**
+ * @brief Serialize a command
+ *
+ * @param name The command to serialize
+ * @return std::bitset<8> The serialized command
+ */
 std::bitset<8> serializeCommand(char name) noexcept
 {
     std::bitset<8> command(name);
     return (command);
 }
 
+/**
+ * @brief Convert a bitset to an int
+ *
+ * @param data The bitset to convert
+ * @return std::size_t The converted bitset
+ */
 std::size_t PizzaSerializer::bitsetToInt(const std::bitset<64>& data)
 {
     auto result = data.to_ulong();
     return (result);
 }
 
+/**
+ * @brief Find the cooking time of a pizza
+ *
+ * @param integral The integral part of the cooking time
+ * @param fractional The fractional part of the cooking time
+ * @return double The cooking time
+ */
 double PizzaSerializer::findCookingTime(
     const std::bitset<64>& integral, const std::bitset<64>& fractional) noexcept
 {
@@ -82,6 +126,12 @@ double PizzaSerializer::findCookingTime(
 std::vector<pizza::Ingredients> PizzaSerializer::bitsetToIngredients(
     const std::bitset<64>& data) noexcept
 {
+/**
+ * @brief Convert a bitset to a list of ingredients
+ *
+ * @param data The bitset to convert
+ * @return std::vector<pizza::Ingredients> The converted bitset
+ */
     std::vector<pizza::Ingredients> ingredients = {};
 
     for (std::size_t it = 0; it < 9; ++it) {
@@ -93,6 +143,12 @@ std::vector<pizza::Ingredients> PizzaSerializer::bitsetToIngredients(
     return (ingredients);
 }
 
+/**
+ * @brief Deserialize a pizza
+ *
+ * @param data The pizza to deserialize
+ * @return pizza::Pizza The deserialized pizza
+ */
 pizza::Pizza PizzaSerializer::deserializePizza(
     const std::array<std::bitset<64>, PizzaSerializer::ARRAY_SIZE>&
         data) noexcept
@@ -108,6 +164,12 @@ pizza::Pizza PizzaSerializer::deserializePizza(
     pizza.setSize(size);
     return (pizza);
 }
+/**
+ * @brief Get the request type of a bitset
+ *
+ * @param type The bitset to convert
+ * @return RequestType The converted bitset
+ */
 
 RequestType PizzaSerializer::getRequestType(std::bitset<64> type)
 {
@@ -119,6 +181,12 @@ RequestType PizzaSerializer::getRequestType(std::bitset<64> type)
     return (RequestType::Empty);
 }
 
+/**
+ * @brief Create a request type
+ *
+ * @param type The request type to create
+ * @return std::bitset<64> The created request type
+ */
 std::bitset<64> PizzaSerializer::createRequestType(RequestType type)
 {
     return {std::bitset<64>(static_cast<int>(type))};

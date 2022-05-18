@@ -19,6 +19,11 @@
 
 #include "Errors.hpp"
 
+/**
+ * @brief Construct a new Named Pipe object
+ *
+ * @param name The name of the pipe
+ */
 NamedPipe::NamedPipe(const std::string& name)
     : path_("/tmp/" + name)
 {
@@ -33,6 +38,13 @@ NamedPipe::NamedPipe(const std::string& name)
     }
 }
 
+/**
+ * @brief Read from the pipe
+ *
+ * @param direction The direction of the pipe
+ * @param wait If the function should wait for data
+ * @return std::bitset<64> The data read
+ */
 std::bitset<64> NamedPipe::read(const IPCDirection& direction, bool wait) const
 {
     int fd = direction == IPCDirection::IN ? fd_in_ : fd_out_;
@@ -52,6 +64,12 @@ std::bitset<64> NamedPipe::read(const IPCDirection& direction, bool wait) const
     return charToBitset(str);
 }
 
+/**
+ * @brief Write to the pipe
+ *
+ * @param direction The direction of the pipe
+ * @param bitset The data to write
+ */
 void NamedPipe::write(const IPCDirection& direction, const std::bitset<64>& bitset) const
 {
     int fd = direction == IPCDirection::IN ? fd_in_ : fd_out_;
@@ -62,6 +80,12 @@ void NamedPipe::write(const IPCDirection& direction, const std::bitset<64>& bits
     }
 }
 
+/**
+ * @brief Convert a bitset to a string
+ *
+ * @param bitset The bitset to convert
+ * @return std::string The string
+ */
 std::string NamedPipe::bitsetToChar(std::bitset<64> bitset) noexcept
 {
     std::string result;
@@ -73,6 +97,12 @@ std::string NamedPipe::bitsetToChar(std::bitset<64> bitset) noexcept
     return result;
 }
 
+/**
+ * @brief Convert a string to a bitset
+ *
+ * @param buffer The string to convert
+ * @return std::bitset<64> The bitset
+ */
 std::bitset<64> NamedPipe::charToBitset(const std::string& buffer) noexcept
 {
     std::bitset<64> bitset;
@@ -83,6 +113,9 @@ std::bitset<64> NamedPipe::charToBitset(const std::string& buffer) noexcept
     return bitset;
 }
 
+/**
+ * @brief Close the pipe
+ */
 void NamedPipe::close() const noexcept
 {
     ::close(fd_in_);
