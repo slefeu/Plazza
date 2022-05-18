@@ -1,4 +1,4 @@
-# Concept implementation : a generic wrapper & implementation of a POSIX Thread Pool
+# ThreadPool class : a generic wrapper & implementation of a POSIX Thread Pool
 
 A thread pool is a group of pre-instantiated, idle threads which stand ready to be put to work. 
 The goal of a thread pool is to maintain a defined number of available threads in order to minimize the overhead associated with creating new threads.
