@@ -123,15 +123,15 @@ double PizzaSerializer::findCookingTime(
     return (first + second);
 }
 
-std::vector<pizza::Ingredients> PizzaSerializer::bitsetToIngredients(
-    const std::bitset<64>& data) noexcept
-{
 /**
  * @brief Convert a bitset to a list of ingredients
  *
  * @param data The bitset to convert
  * @return std::vector<pizza::Ingredients> The converted bitset
  */
+std::vector<pizza::Ingredients> PizzaSerializer::bitsetToIngredients(
+    const std::bitset<64>& data) noexcept
+{
     std::vector<pizza::Ingredients> ingredients = {};
 
     for (std::size_t it = 0; it < 9; ++it) {
