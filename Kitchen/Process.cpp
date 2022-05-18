@@ -6,6 +6,7 @@
 */
 
 #include "Process.hpp"
+#include <unistd.h>
 
 Process::Process() noexcept
     : pid_(::fork())
@@ -51,4 +52,9 @@ void Process::kill() const noexcept
 pid_t Process::getPid() const
 {
     return (isChild() ? ::getpid() : pid_);
+}
+
+pid_t Process::getCurrentPid() noexcept
+{
+    return (::getpid());
 }

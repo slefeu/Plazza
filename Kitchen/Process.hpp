@@ -29,6 +29,7 @@ class Process
     bool isRunning() const noexcept;
     void kill() const noexcept;
     pid_t getPid() const;
+    static pid_t getCurrentPid() noexcept;
 
   private:
     pid_t pid_;

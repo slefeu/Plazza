@@ -8,6 +8,8 @@
 #include "Fridge.hpp"
 
 #include <cmath>
+#include <iomanip>
+#include <ios>
 #include <iostream>
 
 namespace plazza
@@ -54,11 +56,13 @@ void Fridge::display() const noexcept
     unsigned int index = 0;
 
     std::cout << "\nKitchen stocks:" << std::endl;
+    std::cout << "---------------------" << std::endl;
     for (auto i : stocks_) {
-        std::cout << static_cast<pizza::Ingredients>(std::pow(2, index)) << ": "
+        std::cout << std::left << std::setw(20) << static_cast<pizza::Ingredients>(std::pow(2, index))
                   << std::to_string(i) << std::endl;
         ++index;
     }
+    std::cout << "---------------------" << std::endl;
 }
 
 bool Fridge::hasEnough(

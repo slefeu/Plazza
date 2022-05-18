@@ -10,10 +10,13 @@
 #include <unistd.h>
 
 #include <bitset>
+#include <iomanip>
 #include <iostream>
 
 #include "DefaultPizzas.hpp"
 #include "Factory.hpp"
+#include "KitchenProcess.hpp"
+#include "Process.hpp"
 #include "Serializer.hpp"
 
 namespace plazza
@@ -160,7 +163,7 @@ void Kitchen::displayWaitingPizzas() const noexcept
     } else {
         std::cout << "\nPizzas waiting to be cooked :" << std::endl;
         for (std::size_t it = 0; it < list.size(); ++it) {
-            std::cout << list.front() << std::endl;
+            std::cout << "- " <<list.front() << std::endl;
             list.pop();
         }
     }
@@ -176,7 +179,7 @@ void Kitchen::displayBusyCooks() noexcept
     std::cout << "\nBusy cooks : " << list.size() << std::endl;
     for (std::size_t it = 0; it < cooking_.size(); ++it) {
         std::cout << "Cook " << count
-                  << " cooking: " << list.front().getPizzaType() << std::endl;
+                  << " cooking: " << list.front() << std::endl;
         list.pop();
         count++;
     }
@@ -194,11 +197,14 @@ void Kitchen::getStatus() noexcept
     std::bitset<64> success =
         PizzaSerializer::createRequestType(RequestType::Success);
 
-    std::cout << "Kitchen " << ::getpid() << " status :" << std::endl;
+    std::cout << "-----------------------------------------------------" << std::endl;
+    std::cout << "                  Kitchen " << Process::getCurrentPid() << std::endl;
+    std::cout << "-----------------------------------------------------" << std::endl;
     fridge_.display();
     displayWaitingPizzas();
     displayAvailableCooks();
     displayBusyCooks();
+    std::cout << std::endl;
     pipe_->write(IPCDirection::IN, success);
 }
 
