@@ -10,8 +10,8 @@
 The purpose of the project is to simulate a pizzeria, which is composed of two main parts:
 
     - a Reception:
-        - Takes and send orders to the kitchen
-        - Receives the finished pizza and gives it to the customer
+        - Takes and send orders to kitchens
+        - Receives the finished order and gives it to the customer
         - Keeps a log of all orders made
 
     - Kitchens containing:
