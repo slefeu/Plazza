@@ -1,15 +1,13 @@
-# Pizza
+# Handler of Pizza information : Pizza class
 
-The Pizza class is the abstract class which contains the basic attributes and methods of a pizza.
+The Pizza class is the parent class which contains the basic attributes and methods of a pizza.
 
 ## Attributes
 
-Pizza has the following attributes:
-
-* PizzaType, which can be Regina, Margarita, Americana, Fantasia or Custom.
-* PizzaSize, which can be S, M, L, XL or XXL.
-* Ingredients, which is a vector of Ingredients.
-* CookingTime, which is the time to cook the pizza.
+* PizzaType : an `enum` defined in an enum class containing 5 different values (Regina, Margarita, Americana, Fantasia or Custom).
+* PizzaSize : an `enum` defined in an enum class containing 5 different values (S, M, L, XL or XXL).
+* Ingredients : an `std::vector` of Ingredients.
+* CookingTime : a `double` representing the time to cook the pizza.
 
 ## Methods
 
@@ -26,30 +24,16 @@ Pizza has the following methods:
 
 ## Operators
 
-Pizza has the following operators:
+Pizza has the following operator overloads to allow cleaner prints:
 
-* `operator<<(ostream& output, Ingredients rhs)` overloads operator << to print Ingredients.
-* `operator<<(ostream& output, PizzaSize size)` overloads operator << to print PizzaSize.
-* `operator<<(ostream& output, PizzaType type)` overloads operator << to print PizzaType.
-* `operator<<(ostream& output, Pizza& pizza)` overloads operator << to print Pizza.
+* `operator<<(ostream& output, Ingredients rhs)`
+* `operator<<(ostream& output, PizzaSize size)`
+* `operator<<(ostream& output, PizzaType type)`
+* `operator<<(ostream& output, Pizza& pizza)`
 
-## Usage
+## Usage example:
 
-```cpp
-class MyPizza : public Pizza
-{
-  public:
-    MyPizza() noexcept;
-    MyPizza(const MyPizza&) noexcept = default;
-    MyPizza(MyPizza&&) noexcept = default;
-    ~MyPizza() noexcept = default;
-
-    MyPizza& operator=(const MyPizza& rhs) noexcept = default;
-    MyPizza& operator=(MyPizza&& rhs) noexcept = default;
-
-  private:
-};
-
+```c++
 MyPizza::MyPizza() noexcept
     : Pizza(PizzaType::Custom, 10.0)
 {
@@ -64,6 +48,7 @@ int main()
     std::cout << pizza << std::endl;
 }
 ```
+Output : 
 ```bash
 custom S Dough Tomato Gruyere
 ```
