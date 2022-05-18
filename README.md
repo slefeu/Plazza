@@ -23,6 +23,8 @@ The purpose of the project is to simulate a pizzeria, which is composed of two m
     * processes synchronization & commmunication (IPC)
     * POSIX threads synchronization & commmunication
 
+For further details about the implementation of these notions, please refer to the `documentation` folder.
+
 ## Usage:
 
 - `How to compile the project:`
