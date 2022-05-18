@@ -1,6 +1,6 @@
 ## Handling time in kitchens : Clock class
 
-This class is used to handle time in the kitchen. It is used to know if the kitchen is idle or not, if the stocks needs to be refilled and if it is time to cook the orders.
+This class is used to handle time in our kitchens. It is used to know if the kitchen is idle or not, if the stocks needs to be refilled and if it is time to cook the orders.
 
 ### Constructors and Destructors
 
