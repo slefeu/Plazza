@@ -1,12 +1,13 @@
-# Threadpool
+# Concept implementation : a generic wrapper & implementation of a POSIX Thread Pool
 
-A thread pool is a group of pre-instantiated, idle threads which stand ready to be put to work. The goal of a thread pool is to maintain a pool of available threads in order to minimize the overhead associated with creating new threads.
+A thread pool is a group of pre-instantiated, idle threads which stand ready to be put to work. 
+The goal of a thread pool is to maintain a defined number of available threads in order to minimize the overhead associated with creating new threads.
 
 ## Constructors and Destructors
 
-The constructor creates `nbThreads` threads and add them to the `workers_` vector.
+The constructor creates `nbThreads` threads and adds them to a `std::vector` of threads.
 
-```cpp
+```c++
 ThreadPool::ThreadPool(unsigned int nbThreads) noexcept
 {
     while (nbThreads > workers_.size()) {
@@ -17,7 +18,7 @@ ThreadPool::ThreadPool(unsigned int nbThreads) noexcept
 
 The destructor waits until all threads have finished to join them. It also notifies all workers that the pool is finished.
 
-```cpp
+```c++
 ThreadPool::~ThreadPool() noexcept
 {
     {
@@ -33,45 +34,65 @@ ThreadPool::~ThreadPool() noexcept
 }
 ```
 
-
 ## Methods
 
-  * `waitForExecution()` : Wait until the queue is empty. The method uses a mutex and a condition variable to avoid busy waiting. It also uses a unique lock to ensure that the mutex is released when it goes out of scope.
+```c++
+void waitForExecution() noexcept
+```
+- Waits until the queue is empty. 
+- The method uses a mutex and a condition variable to avoid busy waiting. 
+- It also uses a unique lock to ensure that the mutex is released when it goes out of scope.
 
-  * `getBusyThreads()` : Returns the number of busy threads in the pool.
+```c++
+void getBusyThreads() const noexcept
+```
+- Returns the number of busy threads in the pool.
 
-  * `addTask()` : Add a task to the queue and notify one worker that there is a task available. It uses a lock to ensure that only one thread at a time can access the queue.
+```c++
+void addTask(const Task& task) noexcept
+```
+- Adds a task to the queue and notify one worker that there is a task available.
+- It uses a lock to ensure that only one thread at a time can access the queue.
 
-  * `workerThread()` : The worker thread loops until it is notified by the destructor that the pool is finished. At each iteration, it tries to get a task from the queue, and executes it if it succeeds. When a thread finishes its task, it notifies any thread waiting for the queue to be empty, and decreases the number of busy threads.
+```c++
+void workerThread() noexcept
+```
+- It is the main loop of each thread
+- This method is sent at the creation of a thread in the constructor.
+- It loops until it is notified by the destructor that the pool is finished. 
+- At each iteration, it tries to get a task from the queue, and executes it if it succeeds. 
+- When a thread finishes its task, it notifies any thread waiting for the queue to be empty, and decreases the number of busy threads.
 
-  * `executeTask()` : Execute a task by calling its operator().
+```c++
+void executeTask(const Task& task) noexcept
+```
+- Execute the task taken in parameter.
+- the `Task` type is a wrapper of `std::function`.
 
-  * `getTask()` : Get a task from the queue if there is one available. The method uses a mutex and a condition variable to avoid busy waiting. It also uses a unique lock to ensure that the mutex is released when it goes out of scope.
-
-
+```c++
+std::optional<Task> ThreadPool::getTask() noexcept
+```
+- Get a task from the queue if there is one available.
+- The method uses a mutex and a condition variable to avoid busy waiting.
+- It also uses a unique lock to ensure that the mutex is released when it goes out of scope.
+- It returns a `std::nullopt` if no task is found in the queue.
+-
 ## Attributes
 
 * `finished_` : A boolean that is set to true when the thread pool is finished.
-
 * `queue_` : A queue of tasks to execute.
-
 * `workers_` : A vector of workers threads.
-
 * `mutex_` : A mutex used to synchronize access to the queue and the `finished_` variable.
-
 * `wait_mutex_` : A mutex used to synchronize access to the wait condition variable.
-
-* `condition_` : A condition variable used to avoid busy waiting when a thread tries to get a task from the queue. It is notified when a task is added to the queue, or when the thread pool is finished.
-
-* `wait_condition_` : A condition variable used to avoid busy waiting when a thread tries to wait for the queue to be empty. It is notified when a thread finishes its task, or when the thread pool is finished.
-
-* `busyThreads_` : The number of busy threads in the pool.
+* `condition_` : A condition variable used to avoid waiting when a thread tries to get a task from the queue.
+* `wait_condition_` : A condition variable used to avoid waiting when a thread tries to wait for the queue to be empty.
+* `busyThreads_` : The number of threads executing a task in the pool.
 
 ## Usage example
 
-```cpp
+```c++
 #include <cstdio>
-#include <threads/ThreadPool.h>
+#include "ThreadPool.h"
 
 void test(int i)
 {
@@ -80,14 +101,12 @@ void test(int i)
 
 int main()
 {
-    threads::ThreadPool pool(4);
+    threads::ThreadPool pool(4);    // the thread pool will have 4 threads
 
     for (int i = 0; i < 100; ++i) {
         pool.addTask(std::bind(test, i));
     }
-
     pool.waitForExecution();
-
     return 0;
 }
 ```
