@@ -61,3 +61,5 @@ The third parameter is the `time` in milliseconds, used by the kitchen to replac
 - C++ class object serialization and deserialization : [documentation](./documentation/Serializer.md)
     * Send serialized datas during inter-process communication
     * Recovers the datas and recreates an instance of the class with the provided serialized datas
+
+Project made with [Alexandre V.](https://github.com/KatsuKumi) 
