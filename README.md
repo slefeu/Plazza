@@ -1,4 +1,4 @@
-# {EPITECH} | Second year | OOP | Plazza
+# {EPITECH} | Second year | OOP | Concurrent programming | Plazza
 
 ## Plazza project:
 
